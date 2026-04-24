@@ -15,7 +15,8 @@ import PeriodCard from "@/components/PeriodCard";
 import ComparisonChart from "@/components/ComparisonChart";
 import WeeklyTrendChart from "@/components/WeeklyTrendChart";
 import ObjectiveEvolution from "@/components/ObjectiveEvolution";
-import { Target } from "lucide-react";
+import { Target, Settings } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const objectives = checkObjectives(currentData);
@@ -42,14 +43,23 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold text-gray-900">Priority Dashboard</h1>
           <p className="text-sm text-gray-500 mt-1">Objectives tracking · Week of April 3, 2026</p>
         </div>
-        <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
-          <Target size={18} className="text-indigo-500" />
-          <span className="text-sm font-semibold text-gray-700">
-            Objectives met:{" "}
-            <span className={metCount === totalCount ? "text-emerald-600" : "text-amber-600"}>
-              {metCount}/{totalCount}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 shadow-sm">
+            <Target size={18} className="text-indigo-500" />
+            <span className="text-sm font-semibold text-gray-700">
+              Objectives met:{" "}
+              <span className={metCount === totalCount ? "text-emerald-600" : "text-amber-600"}>
+                {metCount}/{totalCount}
+              </span>
             </span>
-          </span>
+          </div>
+          <Link
+            href="/settings"
+            className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-400 rounded-xl px-4 py-2 shadow-sm transition-colors text-sm font-medium text-gray-600 hover:text-gray-900"
+          >
+            <Settings size={16} />
+            Settings
+          </Link>
         </div>
       </div>
 
