@@ -1,46 +1,38 @@
-// Airtable Config table identifiers — hardcoded so no env var is needed for the table itself
-const BASE_ID   = "appZ3onA8CrfO6zhM";
-const TABLE_ID  = "tblIV3Qr9vCEFu1mm";
-const FIELD_KEY = "fldzqMPN00504AucO";
-const FIELD_VAL = "fldnmsIG3e9KzqNDi";
+import path from "path";
+import fs from "fs";
 
-// Record IDs seeded at table creation
-export const CONFIG_RECORDS: Record<string, string> = {
-  STREAK_API_KEY:      "recLMbXnSLhFNRW0l",
-  STREAK_PIPELINE_KEY: "recB6IJhOcyMFD63I",
-};
+const SETTINGS_PATH = path.join(process.cwd(), "config", "settings.json");
 
-function airtableHeaders() {
-  const key = process.env.AIRTABLE_API_KEY;
-  if (!key) throw new Error("AIRTABLE_API_KEY env var is not set");
-  return {
-    Authorization: `Bearer ${key}`,
-    "Content-Type": "application/json",
-  };
+type Settings = Record<string, string>;
+
+function readFile(): Settings {
+  try {
+    return JSON.parse(fs.readFileSync(SETTINGS_PATH, "utf8")) as Settings;
+  } catch {
+    return {};
+  }
 }
 
-export async function getConfig(): Promise<Record<string, string>> {
-  const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?fields%5B%5D=${FIELD_KEY}&fields%5B%5D=${FIELD_VAL}`;
-  const res = await fetch(url, { headers: airtableHeaders(), cache: "no-store" });
-  if (!res.ok) throw new Error(`Airtable GET failed: ${res.status}`);
-  const json = await res.json();
-  const config: Record<string, string> = {};
-  for (const record of json.records ?? []) {
-    const k = record.fields[FIELD_KEY];
-    const v = record.fields[FIELD_VAL] ?? "";
-    if (k) config[k] = v;
-  }
-  return config;
+function writeFile(data: Settings): void {
+  fs.mkdirSync(path.dirname(SETTINGS_PATH), { recursive: true });
+  fs.writeFileSync(SETTINGS_PATH, JSON.stringify(data, null, 2), "utf8");
+}
+
+export async function getConfig(): Promise<Settings> {
+  // Env vars take precedence (useful for production / Vercel deployments)
+  const fromEnv: Settings = {};
+  if (process.env.STREAK_API_KEY)      fromEnv.STREAK_API_KEY      = process.env.STREAK_API_KEY;
+  if (process.env.STREAK_PIPELINE_KEY) fromEnv.STREAK_PIPELINE_KEY = process.env.STREAK_PIPELINE_KEY;
+
+  const fromFile = readFile();
+  return { ...fromFile, ...fromEnv };
 }
 
 export async function setConfigValue(key: string, value: string): Promise<void> {
-  const recordId = CONFIG_RECORDS[key];
-  if (!recordId) throw new Error(`Unknown config key: ${key}`);
-  const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}/${recordId}`;
-  const res = await fetch(url, {
-    method: "PATCH",
-    headers: airtableHeaders(),
-    body: JSON.stringify({ fields: { [FIELD_VAL]: value } }),
-  });
-  if (!res.ok) throw new Error(`Airtable PATCH failed: ${res.status}`);
+  const current = readFile();
+  current[key] = value;
+  writeFile(current);
 }
+
+// Keep for backward compat — no longer needed but avoids import errors
+export const CONFIG_RECORDS: Record<string, string> = {};

@@ -8,13 +8,13 @@ export async function GET(req: NextRequest) {
     const apiKey      = config.STREAK_API_KEY;
     const pipelineKey = config.STREAK_PIPELINE_KEY;
 
-    if (!apiKey)      return NextResponse.json({ error: "Streak API key not configured. Go to /settings." }, { status: 400 });
-    if (!pipelineKey) return NextResponse.json({ error: "Streak pipeline key not configured. Go to /settings." }, { status: 400 });
+    if (!apiKey)      return NextResponse.json({ error: "Streak API key not set. Go to /settings." }, { status: 400 });
+    if (!pipelineKey) return NextResponse.json({ error: "Streak pipeline key not set. Go to /settings." }, { status: 400 });
 
-    const boxes    = await fetchPipelineBoxes(apiKey, pipelineKey);
+    const boxes     = await fetchPipelineBoxes(apiKey, pipelineKey);
     const breakdown = computeBreakdown(boxes);
 
-    // ?test=1 → just validate connectivity, return minimal payload
+    // ?test=1 — validate connectivity only
     if (req.nextUrl.searchParams.get("test") === "1") {
       return NextResponse.json({ ok: true, total: breakdown.total });
     }

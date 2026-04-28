@@ -3,17 +3,19 @@ const STREAK_BASE = "https://www.streak.com/api/v1";
 export interface StreakBox {
   key: string;
   name: string;
-  priority?: number | null; // Streak numeric priority field
-  assignedToSharingEntries?: unknown[];
-  lastUpdatedTimestamp?: number;
+  // Streak priority: 3=HIGH, 2=MEDIUM, 1=LOW, null/0=NONE
+  priority?: number | null;
   reminderTimestamp?: number | null;
+  lastUpdatedTimestamp?: number;
+  stageKey?: string;
+  fields?: Record<string, unknown>;
 }
 
-// Streak priority values: 1=High, 2=Medium, 3=Low (may vary by account)
+// Streak native priority values (confirmed from Streak API v1 docs)
 export const PRIORITY_MAP: Record<number, "High" | "Medium" | "Low"> = {
-  1: "High",
+  3: "High",
   2: "Medium",
-  3: "Low",
+  1: "Low",
 };
 
 export async function fetchPipelineBoxes(
@@ -28,11 +30,17 @@ export async function fetchPipelineBoxes(
     },
     cache: "no-store",
   });
+
+  if (res.status === 401) throw new Error("Invalid Streak API key (401 Unauthorized).");
+  if (res.status === 404) throw new Error("Pipeline not found — check the pipeline key.");
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Streak API error ${res.status}: ${text}`);
   }
-  return res.json() as Promise<StreakBox[]>;
+
+  const data = await res.json();
+  // The endpoint returns either an array or { results: [...] }
+  return (Array.isArray(data) ? data : data.results ?? []) as StreakBox[];
 }
 
 export interface PriorityBreakdown {
@@ -41,33 +49,23 @@ export interface PriorityBreakdown {
   medium: number;
   low: number;
   unset: number;
-  nextDueDateSet: number; // boxes that have a reminder set
+  nextDueDatePct: number; // % of boxes that have a reminder / next due date set
 }
 
 export function computeBreakdown(boxes: StreakBox[]): PriorityBreakdown {
-  const breakdown: PriorityBreakdown = {
-    total: boxes.length,
-    high: 0,
-    medium: 0,
-    low: 0,
-    unset: 0,
-    nextDueDateSet: 0,
-  };
+  const bd: PriorityBreakdown = { total: boxes.length, high: 0, medium: 0, low: 0, unset: 0, nextDueDatePct: 0 };
+  let withDueDate = 0;
+
   for (const box of boxes) {
     const p = box.priority;
-    if (p === 1)      breakdown.high++;
-    else if (p === 2) breakdown.medium++;
-    else if (p === 3) breakdown.low++;
-    else              breakdown.unset++;
+    if (p === 3)      bd.high++;
+    else if (p === 2) bd.medium++;
+    else if (p === 1) bd.low++;
+    else              bd.unset++;
 
-    if (box.reminderTimestamp && box.reminderTimestamp > 0) {
-      breakdown.nextDueDateSet++;
-    }
+    if (box.reminderTimestamp && box.reminderTimestamp > 0) withDueDate++;
   }
-  // nextDueDateSet as a percentage
-  breakdown.nextDueDateSet =
-    breakdown.total > 0
-      ? Math.round((breakdown.nextDueDateSet / breakdown.total) * 100)
-      : 0;
-  return breakdown;
+
+  bd.nextDueDatePct = bd.total > 0 ? Math.round((withDueDate / bd.total) * 100) : 0;
+  return bd;
 }
