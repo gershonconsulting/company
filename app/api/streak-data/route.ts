@@ -14,7 +14,6 @@ export async function GET(req: NextRequest) {
     const boxes     = await fetchPipelineBoxes(apiKey, pipelineKey);
     const breakdown = computeBreakdown(boxes);
 
-    // ?test=1 — validate connectivity only
     if (req.nextUrl.searchParams.get("test") === "1") {
       return NextResponse.json({ ok: true, total: breakdown.total });
     }

@@ -92,20 +92,20 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Settings</h1>
         <p className="text-sm text-gray-500 mb-6">Streak.com API configuration</p>
 
-        {/* Cloudflare read-only notice */}
+        {/* Setup required notice */}
         {!loading && readonly && (
           <div className="mb-6 flex items-start gap-3 bg-sky-50 border border-sky-200 rounded-xl px-5 py-4 text-sm text-sky-800">
             <Cloud size={16} className="mt-0.5 shrink-0 text-sky-500" />
             <div>
-              <p className="font-semibold mb-1">Running on Cloudflare Pages</p>
+              <p className="font-semibold mb-1">One-time setup required</p>
               <p className="text-sky-700 mb-2">
-                Set these as <strong>Environment Variables</strong> in your Cloudflare Pages dashboard:
+                Add <code className="bg-sky-100 px-1 rounded font-mono">AIRTABLE_API_KEY</code> as an environment variable in Cloudflare Pages, then this form will be fully editable.
               </p>
               <ol className="list-decimal list-inside space-y-1 text-sky-700">
-                <li>Open Cloudflare dashboard → <strong>gershon-company</strong> → Settings → Environment variables</li>
-                <li>Add <code className="bg-sky-100 px-1 rounded">STREAK_API_KEY</code> (Production)</li>
-                <li>Add <code className="bg-sky-100 px-1 rounded">STREAK_PIPELINE_KEY</code> (Production)</li>
-                <li>Redeploy — values take effect immediately</li>
+                <li>Go to <strong>airtable.com/create/tokens</strong> → create a token with <em>data.records:read</em> and <em>data.records:write</em> scopes for the <strong>VideoCreation Base</strong></li>
+                <li>Cloudflare dashboard → <strong>gershon-company</strong> → Settings → Environment variables</li>
+                <li>Add <code className="bg-sky-100 px-1 rounded font-mono">AIRTABLE_API_KEY</code> → paste the token → Save</li>
+                <li>Redeploy — this page will unlock automatically</li>
               </ol>
             </div>
           </div>
