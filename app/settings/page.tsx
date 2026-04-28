@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, AlertCircle, Eye, EyeOff, Save, TestTube2, ArrowLeft } from "lucide-react";
+import { CheckCircle, AlertCircle, Eye, EyeOff, Save, TestTube2, ArrowLeft, Cloud } from "lucide-react";
 import Link from "next/link";
 
 type Status = "idle" | "saving" | "saved" | "error" | "testing" | "test_ok" | "test_fail";
@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const [status,      setStatus]      = useState<Status>("idle");
   const [message,     setMessage]     = useState("");
   const [loading,     setLoading]     = useState(true);
+  const [readonly,    setReadonly]     = useState(false);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -21,6 +22,7 @@ export default function SettingsPage() {
       .then((d) => {
         setApiKeySet(d.STREAK_API_KEY_SET ?? false);
         setPipelineKey(d.STREAK_PIPELINE_KEY ?? "");
+        setReadonly(d.readonly ?? false);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -31,19 +33,18 @@ export default function SettingsPage() {
     setMessage("");
     try {
       const body: Record<string, string> = { STREAK_PIPELINE_KEY: pipelineKey };
-      // Only send the API key if the user typed something new
       if (apiKey && apiKey !== "••••••••") body.STREAK_API_KEY = apiKey;
-
       const res = await fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Save failed");
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? json.error ?? "Save failed");
       setStatus("saved");
       setApiKeySet(true);
       setApiKey("");
-      setMessage("Settings saved successfully.");
+      setMessage("Settings saved.");
     } catch (err) {
       setStatus("error");
       setMessage(String(err));
@@ -55,9 +56,10 @@ export default function SettingsPage() {
     setMessage("");
     try {
       const res = await fetch("/api/streak-data?test=1");
-      if (!res.ok) throw new Error((await res.json()).error ?? "Connection failed");
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Connection failed");
       setStatus("test_ok");
-      setMessage("Connection to Streak successful.");
+      setMessage(`Connection successful — ${json.total} leads found.`);
     } catch (err) {
       setStatus("test_fail");
       setMessage(String(err));
@@ -83,18 +85,34 @@ export default function SettingsPage() {
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-xl mx-auto">
-        {/* Back link */}
         <Link href="/" className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-6">
           <ArrowLeft size={14} /> Back to Dashboard
         </Link>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Settings</h1>
-        <p className="text-sm text-gray-500 mb-8">
-          Streak.com API configuration — credentials are stored server-side in Airtable.
-        </p>
+        <p className="text-sm text-gray-500 mb-6">Streak.com API configuration</p>
+
+        {/* Cloudflare read-only notice */}
+        {!loading && readonly && (
+          <div className="mb-6 flex items-start gap-3 bg-sky-50 border border-sky-200 rounded-xl px-5 py-4 text-sm text-sky-800">
+            <Cloud size={16} className="mt-0.5 shrink-0 text-sky-500" />
+            <div>
+              <p className="font-semibold mb-1">Running on Cloudflare Pages</p>
+              <p className="text-sky-700 mb-2">
+                Set these as <strong>Environment Variables</strong> in your Cloudflare Pages dashboard:
+              </p>
+              <ol className="list-decimal list-inside space-y-1 text-sky-700">
+                <li>Open Cloudflare dashboard → <strong>gershon-company</strong> → Settings → Environment variables</li>
+                <li>Add <code className="bg-sky-100 px-1 rounded">STREAK_API_KEY</code> (Production)</li>
+                <li>Add <code className="bg-sky-100 px-1 rounded">STREAK_PIPELINE_KEY</code> (Production)</li>
+                <li>Redeploy — values take effect immediately</li>
+              </ol>
+            </div>
+          </div>
+        )}
 
         {loading ? (
-          <div className="text-sm text-gray-400 animate-pulse">Loading current settings…</div>
+          <div className="text-sm text-gray-400 animate-pulse">Loading…</div>
         ) : (
           <form onSubmit={handleSave} className="flex flex-col gap-5">
             {/* API Key */}
@@ -102,28 +120,21 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <label className="text-sm font-semibold text-gray-700">Streak API Key</label>
                 {apiKeySet && (
-                  <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">
-                    Key saved
-                  </span>
+                  <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-medium">Saved</span>
                 )}
               </div>
-              <p className="text-xs text-gray-400">
-                Found in Streak → Settings → API &amp; Integrations
-              </p>
+              <p className="text-xs text-gray-400">Streak → Settings → API &amp; Integrations</p>
               <div className="relative">
                 <input
                   type={showKey ? "text" : "password"}
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  placeholder={apiKeySet ? "Enter a new key to replace the saved one" : "sk_live_…"}
-                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  placeholder={apiKeySet ? "Enter a new key to replace" : "sk_live_…"}
+                  disabled={readonly}
+                  className="w-full rounded-xl border border-gray-200 px-4 py-2.5 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:bg-gray-50 disabled:text-gray-400"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowKey((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  tabIndex={-1}
-                >
+                <button type="button" onClick={() => setShowKey((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" tabIndex={-1}>
                   {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -132,36 +143,29 @@ export default function SettingsPage() {
             {/* Pipeline Key */}
             <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm flex flex-col gap-3">
               <label className="text-sm font-semibold text-gray-700">Pipeline Key</label>
-              <p className="text-xs text-gray-400">
-                The key of the Streak pipeline whose boxes/leads to track
-              </p>
+              <p className="text-xs text-gray-400">The key of the Streak pipeline to track</p>
               <input
                 type="text"
                 value={pipelineKey}
                 onChange={(e) => setPipelineKey(e.target.value)}
-                placeholder="agCIEr7SomePipelineKey…"
-                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                placeholder="agCIEr7S…"
+                disabled={readonly}
+                className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 disabled:bg-gray-50 disabled:text-gray-400"
               />
             </div>
 
             {statusBanner()}
 
-            {/* Actions */}
             <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={status === "saving"}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-              >
-                <Save size={15} />
-                {status === "saving" ? "Saving…" : "Save Settings"}
-              </button>
-              <button
-                type="button"
-                onClick={handleTest}
-                disabled={!apiKeySet || status === "testing"}
-                className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-400 disabled:opacity-40 text-gray-700 text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
-              >
+              {!readonly && (
+                <button type="submit" disabled={status === "saving"}
+                  className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+                  <Save size={15} />
+                  {status === "saving" ? "Saving…" : "Save"}
+                </button>
+              )}
+              <button type="button" onClick={handleTest} disabled={!apiKeySet || status === "testing"}
+                className="flex items-center gap-2 bg-white border border-gray-200 hover:border-gray-400 disabled:opacity-40 text-gray-700 text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
                 <TestTube2 size={15} />
                 {status === "testing" ? "Testing…" : "Test Connection"}
               </button>
