@@ -1,8 +1,3 @@
 name = "gershon-company"
 compatibility_date = "2024-04-01"
 compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".vercel/output/static"
-
-[[kv_namespaces]]
-binding = "SETTINGS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
