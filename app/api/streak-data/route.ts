@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+
 import { NextRequest, NextResponse } from "next/server";
 import { getConfig } from "@/lib/config";
 import { fetchPipelineBoxes, computeBreakdown } from "@/lib/streak";
