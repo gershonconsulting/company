@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# App config — contains API keys, never commit
-/config/settings.json
+# App config -- API keys live on server, never deploy-over them
+/data/config.json
 
 # dependencies
 /node_modules
@@ -33,7 +33,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files (can opt-in to committing if needed)
 .env*
 
 # vercel
