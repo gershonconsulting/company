@@ -1,8 +1,9 @@
-export const runtime = "nodejs";
-
 import { NextRequest, NextResponse } from "next/server";
 import { getConfig } from "@/lib/config";
 import { fetchPipelineBoxes, computeBreakdown } from "@/lib/streak";
+
+export const runtime = "edge";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,8 +11,8 @@ export async function GET(req: NextRequest) {
     const apiKey      = config.STREAK_API_KEY;
     const pipelineKey = config.STREAK_PIPELINE_KEY;
 
-    if (!apiKey)      return NextResponse.json({ error: "Streak API key not set. Go to /settings." }, { status: 400 });
-    if (!pipelineKey) return NextResponse.json({ error: "Streak pipeline key not set. Go to /settings." }, { status: 400 });
+    if (!apiKey)      return NextResponse.json({ error: "Streak API key not set. Add STREAK_API_KEY env var in Cloudflare Pages." }, { status: 400 });
+    if (!pipelineKey) return NextResponse.json({ error: "Streak pipeline key not set. Add STREAK_PIPELINE_KEY env var in Cloudflare Pages." }, { status: 400 });
 
     const boxes     = await fetchPipelineBoxes(apiKey, pipelineKey);
     const breakdown = computeBreakdown(boxes);
