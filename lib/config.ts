@@ -1,44 +1,30 @@
-// Reads from data/config.json (written by /api/settings on the Hostinger server).
-// Falls back to process.env so local dev and CI smoke-tests still work.
-import path from "path";
-import fs from "fs";
+// On Cloudflare Pages there's no writable filesystem. Streak credentials are
+// read from environment variables set in the Cloudflare Pages project
+// (Settings → Environment variables → Production).
+//
+// To rotate keys: change them in the Cloudflare dashboard and redeploy
+// (push to main, or hit "Retry deployment" in the Pages UI).
 
-const CONFIG_PATH = path.join(process.cwd(), "data", "config.json");
+export type ConfigKey = "STREAK_API_KEY" | "STREAK_PIPELINE_KEY";
 
-interface Config {
-    STREAK_API_KEY?: string;
-    STREAK_PIPELINE_KEY?: string;
+export async function getConfig(): Promise<Record<ConfigKey, string>> {
+  return {
+    STREAK_API_KEY:      process.env.STREAK_API_KEY      ?? "",
+    STREAK_PIPELINE_KEY: process.env.STREAK_PIPELINE_KEY ?? "",
+  };
 }
 
-function readConfigFile(): Config {
-    try {
-          if (fs.existsSync(CONFIG_PATH)) {
-                  const raw = fs.readFileSync(CONFIG_PATH, "utf8");
-                  return JSON.parse(raw) as Config;
-          }
-    } catch {
-          // fall through to env vars
-    }
-    return {};
-}
-
-export async function getConfig(): Promise<Record<string, string>> {
-    const file = readConfigFile();
-    return {
-          STREAK_API_KEY:      file.STREAK_API_KEY      ?? process.env.STREAK_API_KEY      ?? "",
-          STREAK_PIPELINE_KEY: file.STREAK_PIPELINE_KEY ?? process.env.STREAK_PIPELINE_KEY ?? "",
-    };
-}
-
-export async function setConfigValues(
-    values: Partial<{ STREAK_API_KEY: string; STREAK_PIPELINE_KEY: string }>
-  ): Promise<void> {
-    const current = readConfigFile();
-    const next: Config = { ...current, ...values };
-    fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
-    fs.writeFileSync(CONFIG_PATH, JSON.stringify(next, null, 2), "utf8");
-}
-
+// Settings is read-only on Cloudflare Pages — the /settings page shows current
+// values but writing is via the Cloudflare dashboard.
 export function canWriteSettings(): boolean {
-    return true; // always writable on Hostinger Node
+  return false;
+}
+
+// Kept for compat — POST handler will refuse via canWriteSettings() check.
+export async function setConfigValues(
+  _values: Partial<Record<ConfigKey, string>>
+): Promise<void> {
+  throw new Error(
+    "Settings are read-only on Cloudflare Pages. Update STREAK_API_KEY / STREAK_PIPELINE_KEY in the Cloudflare Pages dashboard (Settings → Environment variables) and redeploy."
+  );
 }
