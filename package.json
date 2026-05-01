@@ -1,10 +1,10 @@
 {
   "name": "company",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx @cloudflare/next-on-pages",
+    "build": "next build",
     "preview": "wrangler pages dev .vercel/output/static --compatibility-flags=nodejs_compat",
     "lint": "eslint"
   },
