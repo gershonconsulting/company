@@ -1,30 +1,53 @@
-// On Cloudflare Pages there's no writable filesystem. Streak credentials are
-// read from environment variables set in the Cloudflare Pages project
-// (Settings → Environment variables → Production).
-//
-// To rotate keys: change them in the Cloudflare dashboard and redeploy
-// (push to main, or hit "Retry deployment" in the Pages UI).
+// Streak credentials live in the SETTINGS Cloudflare KV namespace, bound in
+// wrangler.jsonc. The /settings page reads & writes them through the API
+// routes in app/api/. This avoids the "no writable filesystem" limitation of
+// Cloudflare Pages (no fs.writeFile available at runtime).
+
+import { getRequestContext } from "@cloudflare/next-on-pages";
 
 export type ConfigKey = "STREAK_API_KEY" | "STREAK_PIPELINE_KEY";
 
+interface KVNamespace {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string): Promise<void>;
+}
+
+interface CloudflareEnv {
+  SETTINGS: KVNamespace;
+}
+
+function kv(): KVNamespace {
+  const ctx = getRequestContext();
+  const env = ctx.env as unknown as CloudflareEnv;
+  if (!env?.SETTINGS) {
+    throw new Error("SETTINGS KV binding not available. Check wrangler.jsonc.");
+  }
+  return env.SETTINGS;
+}
+
 export async function getConfig(): Promise<Record<ConfigKey, string>> {
+  const settings = kv();
+  const [apiKey, pipelineKey] = await Promise.all([
+    settings.get("STREAK_API_KEY"),
+    settings.get("STREAK_PIPELINE_KEY"),
+  ]);
   return {
-    STREAK_API_KEY:      process.env.STREAK_API_KEY      ?? "",
-    STREAK_PIPELINE_KEY: process.env.STREAK_PIPELINE_KEY ?? "",
+    STREAK_API_KEY: apiKey ?? "",
+    STREAK_PIPELINE_KEY: pipelineKey ?? "",
   };
 }
 
-// Settings is read-only on Cloudflare Pages — the /settings page shows current
-// values but writing is via the Cloudflare dashboard.
-export function canWriteSettings(): boolean {
-  return false;
+export async function setConfigValues(
+  values: Partial<Record<ConfigKey, string>>
+): Promise<void> {
+  const settings = kv();
+  const ops: Promise<void>[] = [];
+  for (const [k, v] of Object.entries(values)) {
+    if (v && v.length > 0) ops.push(settings.put(k, v));
+  }
+  await Promise.all(ops);
 }
 
-// Kept for compat — POST handler will refuse via canWriteSettings() check.
-export async function setConfigValues(
-  _values: Partial<Record<ConfigKey, string>>
-): Promise<void> {
-  throw new Error(
-    "Settings are read-only on Cloudflare Pages. Update STREAK_API_KEY / STREAK_PIPELINE_KEY in the Cloudflare Pages dashboard (Settings → Environment variables) and redeploy."
-  );
+export function canWriteSettings(): boolean {
+  return true;
 }
