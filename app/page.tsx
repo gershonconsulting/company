@@ -51,9 +51,9 @@ export default function Dashboard() {
     setLiveError(null);
     fetch("/api/streak-data")
       .then(async (r) => {
-        const json = await r.json();
+        const json = await r.json() as { error?: string };
         if (!r.ok) throw new Error(json.error ?? `HTTP ${r.status}`);
-        setLiveData(breakdownToPeriodData(json as StreakBreakdown));
+        setLiveData(breakdownToPeriodData(json as unknown as StreakBreakdown));
       })
       .catch((e: Error) => setLiveError(e.message))
       .finally(() => setLoading(false));
@@ -172,7 +172,7 @@ export default function Dashboard() {
         <ObjectiveEvolution />
       </section>
 
-      {/* ── Period comparison cards ─────────────────────────────── */}
+      {/* ── Period comparison cards ───────────────────────────── */}
       <section className="mb-8">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
           Period Snapshot Comparison
@@ -221,7 +221,7 @@ export default function Dashboard() {
                 { metric: "Medium Priority", target: `> ${OBJECTIVES.mediumMin}%`,         current: objectives.mediumPriority.value, lastWeek: getMediumPct(lastWeekData),     lastYear: getMediumPct(lastYearData),     met: objectives.mediumPriority.met },
                 { metric: "Low Priority",    target: `< ${OBJECTIVES.lowMax}%`,            current: objectives.lowPriority.value,    lastWeek: getLowPct(lastWeekData),        lastYear: getLowPct(lastYearData),        met: objectives.lowPriority.met },
                 { metric: "Next Due Date",   target: `≥ ${OBJECTIVES.nextDueDateTarget}%`, current: objectives.nextDueDate.value,    lastWeek: lastWeekData.nextDueDateOnTime, lastYear: lastYearData.nextDueDateOnTime, met: objectives.nextDueDate.met },
-                { metric: "High Leads %",    target: `≥ ${OBJECTIVES.highLeadsTarget}%`,   current: objectives.highLeads.value,      lastWeek: getHighPct(lastWeekData),       lastYear: getHighPct(lastYearData),       met: objectives.highLeads.met },
+                { metric: "High Leads %",    target: `≥ ${OBJECTIVES.highLeadsTarget}%`,   current: objectives.highLeads.value,      lastWeek: φetHighPct(lastWeekData),       lastYear: getHighPct(lastYearData),       met: objectives.highLeads.met },
                 { metric: "Medium Leads %",  target: `< ${OBJECTIVES.mediumLeadsMax}%`,    current: objectives.mediumLeads.value,    lastWeek: getMediumPct(lastWeekData),     lastYear: getMediumPct(lastYearData),     met: objectives.mediumLeads.met },
               ].map((row) => (
                 <tr key={row.metric} className="hover:bg-gray-50 transition-colors">
