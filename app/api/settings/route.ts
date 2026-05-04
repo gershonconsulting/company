@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getConfig, canWriteSettings } from "@/lib/config";
+import { getConfig, setConfigValues } from "@/lib/config";
 
-// Cloudflare Pages requires edge runtime for API routes via @cloudflare/next-on-pages.
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
@@ -12,19 +11,22 @@ export async function GET() {
       STREAK_API_KEY_SET:  !!config.STREAK_API_KEY,
       STREAK_API_KEY:      config.STREAK_API_KEY ? "••••••••" : "",
       STREAK_PIPELINE_KEY: config.STREAK_PIPELINE_KEY ?? "",
-      readonly: !canWriteSettings(),
+      readonly: false,
     });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }
 }
 
-export async function POST() {
-  return NextResponse.json(
-    {
-      error:
-        "Settings are read-only. Update STREAK_API_KEY and STREAK_PIPELINE_KEY in the Cloudflare Pages dashboard (gershoncrm-company → Settings → Environment variables), then redeploy.",
-    },
-    { status: 422 }
-  );
+export async function POST(req: Request) {
+  try {
+    const body = await req.json() as Record<string, string>;
+    const patch: Partial<{ STREAK_API_KEY: string; STREAK_PIPELINE_KEY: string }> = {};
+    if (body.STREAK_API_KEY      && body.STREAK_API_KEY      !== "••••••••") patch.STREAK_API_KEY      = body.STREAK_API_KEY;
+    if (body.STREAK_PIPELINE_KEY && body.STREAK_PIPELINE_KEY !== "••••••••") patch.STREAK_PIPELINE_KEY = body.STREAK_PIPELINE_KEY;
+    await setConfigValues(patch);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    return NextResponse.json({ error: String(err) }, { status: 500 });
+  }
 }
