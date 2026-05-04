@@ -221,7 +221,7 @@ export default function Dashboard() {
                 { metric: "Medium Priority", target: `> ${OBJECTIVES.mediumMin}%`,         current: objectives.mediumPriority.value, lastWeek: getMediumPct(lastWeekData),     lastYear: getMediumPct(lastYearData),     met: objectives.mediumPriority.met },
                 { metric: "Low Priority",    target: `< ${OBJECTIVES.lowMax}%`,            current: objectives.lowPriority.value,    lastWeek: getLowPct(lastWeekData),        lastYear: getLowPct(lastYearData),        met: objectives.lowPriority.met },
                 { metric: "Next Due Date",   target: `≥ ${OBJECTIVES.nextDueDateTarget}%`, current: objectives.nextDueDate.value,    lastWeek: lastWeekData.nextDueDateOnTime, lastYear: lastYearData.nextDueDateOnTime, met: objectives.nextDueDate.met },
-                { metric: "High Leads %",    target: `≥ ${OBJECTIVES.highLeadsTarget}%`,   current: objectives.highLeads.value,      lastWeek: φetHighPct(lastWeekData),       lastYear: getHighPct(lastYearData),       met: objectives.highLeads.met },
+                { metric: "High Leads %",    target: `≥ ${OBJECTIVES.highLeadsTarget}%`,   current: objectives.highLeads.value,      lastWeek: getHighPct(lastWeekData),       lastYear: getHighPct(lastYearData),       met: objectives.highLeads.met },
                 { metric: "Medium Leads %",  target: `< ${OBJECTIVES.mediumLeadsMax}%`,    current: objectives.mediumLeads.value,    lastWeek: getMediumPct(lastWeekData),     lastYear: getMediumPct(lastYearData),     met: objectives.mediumLeads.met },
               ].map((row) => (
                 <tr key={row.metric} className="hover:bg-gray-50 transition-colors">
