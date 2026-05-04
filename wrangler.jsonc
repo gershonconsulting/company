@@ -3,5 +3,8 @@
   "name": "gershoncrm-company",
   "compatibility_date": "2026-01-01",
   "pages_build_output_dir": ".vercel/output/static",
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    { "binding": "SETTINGS", "id": "7b73211a97a9436387ddac1902b4a532" }
+  ]
 }
