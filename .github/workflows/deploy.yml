@@ -35,7 +35,14 @@ jobs:
       - name: Build for Cloudflare Pages
         run: npx @cloudflare/next-on-pages
 
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to gershon-company (production - bound to company.gershoncrm.com)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .vercel/output/static --project-name gershon-company
+
+      - name: Deploy to gershoncrm-company (mirror, kept in sync)
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
