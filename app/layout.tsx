@@ -3,8 +3,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "GershonCRM Pipeline Dashboard",
-  description: "Streak CRM pipeline tracking, priority objectives, weekly history",
+  title: "company.gershonCRM.com",
+  description: "Streak CRM pipeline tracking, priority objectives, monthly analytics",
 };
 
 export default function RootLayout({

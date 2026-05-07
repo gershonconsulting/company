@@ -13,10 +13,10 @@ import {
   PeriodData,
 } from "@/lib/data";
 import ObjectiveBadge from "@/components/ObjectiveBadge";
-import PeriodCard from "@/components/PeriodCard";
 import ComparisonChart from "@/components/ComparisonChart";
 import WeeklyTrendChart from "@/components/WeeklyTrendChart";
 import ObjectiveEvolution from "@/components/ObjectiveEvolution";
+import SalesAnalytics from "@/components/SalesAnalytics";
 import { Target, Settings, RefreshCw, AlertCircle, Radio } from "lucide-react";
 import Link from "next/link";
 
@@ -172,19 +172,9 @@ export default function Dashboard() {
         <ObjectiveEvolution />
       </section>
 
-      {/* ── Period comparison cards ───────────────────────────── */}
+      {/* ── Sales analytics: VP analysis, SWOT, monthly trends, hot/stale leads ── */}
       <section className="mb-8">
-        <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-3">
-          Period Snapshot Comparison
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <PeriodCard data={currentData} />
-          <PeriodCard data={currentData} compareWith={lastWeekData} compareLabel="last week" />
-          <PeriodCard data={currentData} compareWith={lastYearData} compareLabel="last year" />
-        </div>
-        <p className="text-xs text-gray-400 mt-2">
-          Left: current · Center: vs last week · Right: vs last year (deltas shown)
-        </p>
+        <SalesAnalytics />
       </section>
 
       {/* ── Snapshot charts ────────────────────────────────────── */}
