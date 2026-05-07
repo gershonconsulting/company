@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Header from "@/components/Header";
 
 export const metadata: Metadata = {
-  title: "Priority Dashboard",
-  description: "Objectives priority tracking dashboard",
+  title: "GershonCRM Pipeline Dashboard",
+  description: "Streak CRM pipeline tracking, priority objectives, weekly history",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-gray-50">
+        <Header />
+        <main className="flex-1">{children}</main>
+      </body>
     </html>
   );
 }
