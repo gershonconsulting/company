@@ -37,14 +37,14 @@ function DeltaBadge({ delta }: { delta: number }) {
 function MonthlyBar({ series, color }: { series: MonthlyTrend[]; color: string }) {
   const max = Math.max(1, ...series.map((d) => d.count));
   return (
-    <div className="flex items-end gap-1 h-28 overflow-hidden">
+    <div className="flex items-end gap-1 h-40">
       {series.map((d) => (
-        <div key={d.month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
-          <div className="text-[10px] text-gray-600 font-semibold tabular-nums" style={{ visibility: d.count > 0 ? "visible" : "hidden" }}>{d.count}</div>
-          <div className="w-full bg-gray-100 rounded-t-md relative h-full">
-            <div className="absolute bottom-0 left-0 right-0 rounded-t-md" style={{ height: `${(d.count / max) * 100}%`, backgroundColor: color }} />
+        <div key={d.month} className="flex-1 flex flex-col items-center gap-1 min-w-0 h-full">
+          <div className="text-[10px] text-gray-600 font-semibold tabular-nums shrink-0" style={{ visibility: d.count > 0 ? "visible" : "hidden" }}>{d.count}</div>
+          <div className="flex-1 w-full bg-gray-100 rounded-t-md relative min-h-0">
+            <div className="absolute bottom-0 left-0 right-0 rounded-t-md transition-all" style={{ height: `${(d.count / max) * 100}%`, backgroundColor: color }} />
           </div>
-          <div className="text-[9px] text-gray-400 truncate w-full text-center">{fmtMonth(d.month)}</div>
+          <div className="text-[10px] text-gray-400 truncate w-full text-center shrink-0">{fmtMonth(d.month)}</div>
         </div>
       ))}
     </div>
@@ -285,8 +285,4 @@ export default function ReportsPage() {
               <MonthlyBar series={data.monthlyRemoved} color="#F59E0B" />
             </div>
           </div>
-        );
-      })()}
-    </main>
-  );
-}
+        )

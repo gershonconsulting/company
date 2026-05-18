@@ -12,7 +12,7 @@ function fmtTimestamp(iso: string): string {
   if (!iso) return "";
   const d = new Date(iso);
   if (isNaN(d.getTime())) return "";
-  const date = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  const date = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "America/New_York" });
   const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York", timeZoneName: "short" });
   return `${date}, ${time}`;
 }

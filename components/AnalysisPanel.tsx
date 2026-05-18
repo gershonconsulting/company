@@ -10,16 +10,16 @@ function BarSeries({ data, color }: { data: MonthlyTrend[]; color: "brand" | "gr
   const max = Math.max(1, ...data.map((d) => d.count));
   const fill = color === "brand" ? "bg-[color:var(--brand)]" : "bg-emerald-500";
   return (
-    <div className="flex items-end gap-1 h-32 overflow-hidden">
+    <div className="flex items-end gap-1 h-40">
       {data.map((d) => (
-        <div key={d.month} className="flex-1 flex flex-col items-center gap-1 min-w-0">
-          <div className="text-xs text-gray-700 font-semibold tabular-nums" style={{ visibility: d.count > 0 ? "visible" : "hidden" }}>
+        <div key={d.month} className="flex-1 flex flex-col items-center gap-1 min-w-0 h-full">
+          <div className="text-xs text-gray-700 font-semibold tabular-nums shrink-0" style={{ visibility: d.count > 0 ? "visible" : "hidden" }}>
             {d.count}
           </div>
-          <div className="w-full bg-gray-100 rounded-t-md" style={{ height: "100%", position: "relative" }}>
-            <div className={`absolute bottom-0 left-0 right-0 ${fill} rounded-t-md`} style={{ height: `${(d.count / max) * 100}%` }} />
+          <div className="flex-1 w-full bg-gray-100 rounded-t-md relative min-h-0">
+            <div className={`absolute bottom-0 left-0 right-0 ${fill} rounded-t-md transition-all`} style={{ height: `${(d.count / max) * 100}%` }} />
           </div>
-          <div className="text-[10px] text-gray-400 truncate w-full text-center">
+          <div className="text-[10px] text-gray-400 truncate w-full text-center shrink-0">
             {fmtMonth(d.month)}
           </div>
         </div>
