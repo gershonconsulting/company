@@ -285,4 +285,8 @@ export default function ReportsPage() {
               <MonthlyBar series={data.monthlyRemoved} color="#F59E0B" />
             </div>
           </div>
-        )
+        );
+      })()}
+    </main>
+  );
+}
