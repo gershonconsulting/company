@@ -85,9 +85,23 @@ export default function AnalysisPanel() {
   if (error)   return <ErrorShim message={error} />;
   if (!data)   return null;
 
+  const newLeadsTotal = data.monthlyAllIntake.reduce((s, d) => s + d.count, 0);
+  const newLeadsAvg   = data.monthlyAllIntake.length > 0 ? newLeadsTotal / data.monthlyAllIntake.length : 0;
+
   return (
     <div className="flex flex-col gap-6">
-      {/* Monthly trends */}
+      {/* Primary view: NEW LEADS per month (all priorities) */}
+      <div className="bg-white rounded-xl shadow p-5 border-t-4 border-[color:var(--brand)]">
+        <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
+          <Flame size={16} className="text-[color:var(--brand)] mr-2" />
+          New leads — by month
+          <span className="ml-auto text-xs font-normal text-gray-400">last {data.monthlyAllIntake.length}mo · {newLeadsTotal} total · ~{newLeadsAvg.toFixed(1)}/mo</span>
+        </h3>
+        <p className="text-xs text-gray-400 mb-4">How many new leads we added to the pipeline each month (all priorities).</p>
+        <BarSeries data={data.monthlyAllIntake} color="brand" />
+      </div>
+
+      {/* Secondary: High Priority intake + Reached Closing side-by-side */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl shadow p-5">
           <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
