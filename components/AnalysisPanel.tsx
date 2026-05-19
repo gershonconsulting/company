@@ -1,32 +1,11 @@
 "use client";
 
 import { Flame, Trophy, Layers, Calendar } from "lucide-react";
+import InteractiveMonthlyBar from "@/components/InteractiveMonthlyBar";
 import {
   useAnalytics, LoadingShim, ErrorShim, fmtMonth,
   MonthlyTrend, FunnelStage, HotLead,
 } from "@/components/analytics-shared";
-
-function BarSeries({ data, color }: { data: MonthlyTrend[]; color: "brand" | "green" }) {
-  const max = Math.max(1, ...data.map((d) => d.count));
-  const fill = color === "brand" ? "bg-[color:var(--brand)]" : "bg-emerald-500";
-  return (
-    <div className="flex items-end gap-1 h-40">
-      {data.map((d) => (
-        <div key={d.month} className="flex-1 flex flex-col items-center gap-1 min-w-0 h-full">
-          <div className="text-xs text-gray-700 font-semibold tabular-nums shrink-0" style={{ visibility: d.count > 0 ? "visible" : "hidden" }}>
-            {d.count}
-          </div>
-          <div className="flex-1 w-full bg-gray-100 rounded-t-md relative min-h-0">
-            <div className={`absolute bottom-0 left-0 right-0 ${fill} rounded-t-md transition-all`} style={{ height: `${(d.count / max) * 100}%` }} />
-          </div>
-          <div className="text-[10px] text-gray-400 truncate w-full text-center shrink-0">
-            {fmtMonth(d.month)}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function Funnel({ funnel, total }: { funnel: FunnelStage[]; total: number }) {
   const max = Math.max(1, ...funnel.map((f) => f.count));
@@ -98,7 +77,7 @@ export default function AnalysisPanel() {
           <span className="ml-auto text-xs font-normal text-gray-400">last {data.monthlyAllIntake.length}mo · {newLeadsTotal} total · ~{newLeadsAvg.toFixed(1)}/mo</span>
         </h3>
         <p className="text-xs text-gray-400 mb-4">How many new leads we added to the pipeline each month (all priorities).</p>
-        <BarSeries data={data.monthlyAllIntake} color="brand" />
+        <InteractiveMonthlyBar data={data.monthlyAllIntake} color="#FE1B04" metric="intake" />
       </div>
 
       {/* Secondary: High Priority intake + Reached Closing side-by-side */}
@@ -110,7 +89,7 @@ export default function AnalysisPanel() {
             <span className="ml-auto text-xs font-normal text-gray-400">last {data.monthlyHighIntake.length}mo</span>
           </h3>
           <p className="text-xs text-gray-400 mb-3">When new High Priority leads were added to the pipeline.</p>
-          <BarSeries data={data.monthlyHighIntake} color="brand" />
+          <InteractiveMonthlyBar data={data.monthlyHighIntake} color="#FE1B04" metric="highIntake" height={180} />
         </div>
         <div className="bg-white rounded-xl shadow p-5">
           <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
@@ -119,7 +98,7 @@ export default function AnalysisPanel() {
             <span className="ml-auto text-xs font-normal text-gray-400">last {data.monthlyReachedClosing.length}mo</span>
           </h3>
           <p className="text-xs text-gray-400 mb-3">Leads currently in {data.closingStageNames.join(" / ") || "closing"} stages, by last-touch month.</p>
-          <BarSeries data={data.monthlyReachedClosing} color="green" />
+          <InteractiveMonthlyBar data={data.monthlyReachedClosing} color="#10B981" metric="closing" height={180} />
         </div>
       </div>
 
