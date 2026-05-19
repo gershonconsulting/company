@@ -1,18 +1,35 @@
 @import "tailwindcss";
 
+/* Canonical Gershon.AI design tokens — sourced from finance.gershoncrm.com.
+   Any change here must propagate to every gershoncrm.* platform.
+   See: GERSHON_DESIGN_SYSTEM.md at the repo root. */
 :root {
   --background:  #ffffff;
-  --foreground:  #171717;
+  --foreground:  #1f2937;
 
-  /* Gershon brand — red of gershon.ai, mirrors linalysis.net structure */
-  --brand:       #FE1B04;
-  --brand-dark:  #C8150A;
-  --brand-light: #FFE9E5;
+  /* Brand — indigo from the Gershon.AI logo */
+  --brand:       #6366f1;
+  --brand-dark:  #4338ca;
+  --brand-light: #eef2ff;
 
-  --bg:          #F7F7F8;
-  --text:        #1A1A1A;
-  --text-muted:  #6B6B70;
-  --border:      #E5E5E8;
+  /* Neutral palette */
+  --bg:          #f8fafc;
+  --card:        #ffffff;
+  --text:        #1f2937;
+  --text-muted:  #64748b;
+  --border:      #e5e7eb;
+
+  /* Semantic accents */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger:  #dc2626;
+  --rose:    #f43f5e;
+  --info:    #0ea5e9;
+  --violet:  #8b5cf6;
+
+  /* Layout */
+  --sidebar-w: 232px;
+  --topbar-h:  56px;
 }
 
 @theme inline {
@@ -31,7 +48,6 @@ body {
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Brand-coded utility helpers used across tabs */
 .bg-brand        { background-color: var(--brand); }
 .bg-brand-light  { background-color: var(--brand-light); }
 .text-brand      { color: var(--brand); }
