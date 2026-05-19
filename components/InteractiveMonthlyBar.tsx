@@ -6,6 +6,8 @@ import {
 } from "recharts";
 import { ChevronDown, ChevronUp, ExternalLink, ListChecks, Loader2 } from "lucide-react";
 import { fmtMonth, MonthlyTrend } from "@/components/analytics-shared";
+import { useDemo } from "@/lib/demo-context";
+import { demoLeadsFor } from "@/lib/demo-data";
 
 export type Metric = "intake" | "highIntake" | "closing" | "removed";
 
@@ -36,6 +38,7 @@ const RANGES: { label: string; n: number }[] = [
 export default function InteractiveMonthlyBar({
   data, color, metric, title, averageLabel = true, height = 220,
 }: Props) {
+  const { demoMode } = useDemo();
   const [rangeN,          setRangeN]          = useState(12);
   const [selectedMonth,   setSelectedMonth]   = useState<string | null>(null);
   const [leads,           setLeads]           = useState<DrillLead[]>([]);
@@ -52,6 +55,10 @@ export default function InteractiveMonthlyBar({
     setDrillError(null);
     setDrillLoading(true);
     try {
+      if (demoMode) {
+        setLeads(demoLeadsFor(metric, month) as DrillLead[]);
+        return;
+      }
       const r = await fetch(`/api/streak-analytics/leads?metric=${metric}&month=${encodeURIComponent(month)}`, { cache: "no-store" });
       const j = await r.json() as { error?: string; leads?: DrillLead[] };
       if (!r.ok) throw new Error(j.error ?? `HTTP ${r.status}`);

@@ -14,6 +14,8 @@ import InteractiveMonthlyBar from "@/components/InteractiveMonthlyBar";
 import {
   useAnalytics, LoadingShim, ErrorShim, fmtMonth,
 } from "@/components/analytics-shared";
+import { useDemo } from "@/lib/demo-context";
+import { DEMO_BREAKDOWN } from "@/lib/demo-data";
 
 interface StreakBreakdown {
   total: number;
@@ -26,10 +28,17 @@ interface StreakBreakdown {
 }
 
 function useBreakdown() {
+  const { demoMode } = useDemo();
   const [data,    setData]    = useState<StreakBreakdown | null>(null);
   const [error,   setError]   = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const reload = useCallback(() => {
+    if (demoMode) {
+      setData(DEMO_BREAKDOWN as StreakBreakdown);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     setLoading(true); setError(null);
     fetch("/api/streak-data", { cache: "no-store" })
       .then(async (r) => {
@@ -39,7 +48,7 @@ function useBreakdown() {
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [demoMode]);
   useEffect(() => { reload(); }, [reload]);
   return { data, error, loading, reload };
 }

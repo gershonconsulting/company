@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useDemo } from "@/lib/demo-context";
+import { DEMO_ANALYTICS } from "@/lib/demo-data";
 import { AlertTriangle } from "lucide-react";
 
 export interface MonthlyTrend  { month: string; count: number; }
@@ -38,11 +40,21 @@ interface FetchState {
 }
 
 export function useAnalytics(): FetchState {
+  const { demoMode } = useDemo();
   const [data,    setData]    = useState<PipelineAnalytics | null>(null);
   const [error,   setError]   = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (demoMode) {
+      setData(DEMO_ANALYTICS);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setData(null);
+    setError(null);
     fetch("/api/streak-analytics", { cache: "no-store" })
       .then(async (r) => {
         const json = await r.json() as { error?: string } & PipelineAnalytics;
@@ -51,7 +63,7 @@ export function useAnalytics(): FetchState {
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [demoMode]);
 
   return { data, error, loading };
 }
