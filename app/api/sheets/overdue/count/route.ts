@@ -5,9 +5,7 @@ import { fetchPipelineBoxes, resolvePipelineKey } from "@/lib/streak";
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
-// Plain-text count of boxes with an active follow-up signal.
-// Active = has an incomplete task OR a scheduled next due date OR a legacy reminder.
-// Matches the "Active Follow-ups" KPI on the dashboard.
+// Plain-text count of boxes that have at least one OVERDUE task.
 export async function GET() {
   try {
     const config = await getConfig();
@@ -18,10 +16,7 @@ export async function GET() {
     const boxes = await fetchPipelineBoxes(apiKey, pipelineKey);
     let count = 0;
     for (const b of boxes) {
-      const hasIncomplete = !!(b.taskIncompleteCount && b.taskIncompleteCount > 0);
-      const hasDueDate    = !!(b.soonestTaskDueDate && b.soonestTaskDueDate > 0);
-      const hasReminder   = !!(b.reminderTimestamp  && b.reminderTimestamp  > 0);
-      if (hasIncomplete || hasDueDate || hasReminder) count++;
+      if (b.taskOverdueCount && b.taskOverdueCount > 0) count++;
     }
     return plain(String(count));
   } catch {
@@ -32,9 +27,6 @@ export async function GET() {
 function plain(body: string) {
   return new NextResponse(body, {
     status: 200,
-    headers: {
-      "Content-Type": "text/plain",
-      "Cache-Control": "no-store",
-    },
+    headers: { "Content-Type": "text/plain", "Cache-Control": "no-store" },
   });
 }

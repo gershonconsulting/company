@@ -4,10 +4,17 @@ export interface StreakBox {
   key: string;
   name: string;
   priority?: number | null;
-  reminderTimestamp?: number | null;
+  reminderTimestamp?: number | null;            // legacy — Streak no longer populates this
   lastUpdatedTimestamp?: number;
   stageKey?: string;
   fields?: Record<string, unknown>;
+  // Task-driven follow-up signals (what Streak actually populates today)
+  taskTotal?: number;
+  taskCompleteCount?: number;
+  taskIncompleteCount?: number;
+  taskOverdueCount?: number;
+  soonestTaskDueDate?: number | null;
+  earliestOverdueTaskDueDate?: number | null;
 }
 
 interface DropdownOption { key: string; name: string; }
@@ -116,7 +123,13 @@ export function computeBreakdown(boxes: StreakBox[], mapping: PriorityFieldMappi
     } else {
       bd.unset++;
     }
-    if (box.reminderTimestamp && box.reminderTimestamp > 0) withDueDate++;
+    // "Active follow-up" = box has at least one incomplete task OR a scheduled
+    // next due date. The legacy reminderTimestamp is no longer populated by Streak;
+    // taskIncompleteCount + soonestTaskDueDate are the live signals.
+    const hasIncomplete = !!(box.taskIncompleteCount && box.taskIncompleteCount > 0);
+    const hasDueDate    = !!(box.soonestTaskDueDate && box.soonestTaskDueDate > 0);
+    const hasReminder   = !!(box.reminderTimestamp  && box.reminderTimestamp  > 0);
+    if (hasIncomplete || hasDueDate || hasReminder) withDueDate++;
   }
   bd.nextDueDatePct = bd.total > 0 ? Math.round((withDueDate / bd.total) * 100) : 0;
   return bd;
