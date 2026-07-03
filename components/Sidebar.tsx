@@ -4,22 +4,23 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, LineChart, Layers, AlertTriangle,
-  DollarSign, Target, Settings as SettingsIcon, Activity, FileBarChart,
-  Sparkles, LogOut,
+  DollarSign, Target, Settings as SettingsIcon, Sparkles, LogOut, FileBarChart,
 } from "lucide-react";
-import { APP_VERSION, APP_BUILT_AT } from "@/lib/version";
+import { APP_VERSION, RELEASE_DATE } from "@/lib/version";
 import { useDemo } from "@/lib/demo-context";
 
-function fmtTimestamp(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  const date = d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "America/New_York" });
-  const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true, timeZone: "America/New_York", timeZoneName: "short" });
-  return `${date}, ${time}`;
-}
-
 type Item = { href: string; label: string; icon: React.ComponentType<{ size?: number; className?: string }>; match: (p: string) => boolean };
+
+// Pulse/activity SVG matching the Gershon.AI logo standard
+function PulseLogo({ size = 24 }: { size?: number }) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="none"
+         stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"
+         aria-hidden="true">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+  );
+}
 
 export default function Sidebar() {
   const pathname = usePathname() ?? "/";
@@ -29,12 +30,17 @@ export default function Sidebar() {
   const sections: { heading?: string; items: Item[] }[] = [
     {
       items: [
-        { href: "/",           label: "Dashboard",       icon: LayoutDashboard, match: (p) => p === "/" },
-        { href: "/analysis",   label: "Analysis",        icon: LineChart,       match: (p) => p.startsWith("/analysis") },
-        { href: "/swot",       label: "SWOT",            icon: Layers,          match: (p) => p.startsWith("/swot") },
-        { href: "/warnings",   label: "Warnings",        icon: AlertTriangle,   match: (p) => p.startsWith("/warnings") },
-        { href: "/values",     label: "Values",          icon: DollarSign,      match: (p) => p.startsWith("/values") },
-        { href: "/objectives", label: "Objectives",      icon: Target,          match: (p) => p.startsWith("/objectives") },
+        { href: "/",           label: "Dashboard",  icon: LayoutDashboard, match: (p) => p === "/" },
+      ],
+    },
+    {
+      heading: "Pipeline",
+      items: [
+        { href: "/analysis",   label: "Analysis",   icon: LineChart,     match: (p) => p.startsWith("/analysis") },
+        { href: "/swot",       label: "SWOT",       icon: Layers,        match: (p) => p.startsWith("/swot") },
+        { href: "/warnings",   label: "Warnings",   icon: AlertTriangle, match: (p) => p.startsWith("/warnings") },
+        { href: "/values",     label: "Values",     icon: DollarSign,    match: (p) => p.startsWith("/values") },
+        { href: "/objectives", label: "Objectives", icon: Target,        match: (p) => p.startsWith("/objectives") },
       ],
     },
     {
@@ -43,98 +49,121 @@ export default function Sidebar() {
         { href: "/reports", label: "Monthly Reports", icon: FileBarChart, match: (p) => p.startsWith("/reports") },
       ],
     },
-    {
-      heading: "Configuration",
-      items: [
-        { href: "/settings", label: "Settings", icon: SettingsIcon, match: (p) => p.startsWith("/settings") },
-      ],
-    },
   ];
 
   function handleLogout() {
-    if (!confirm("Sign out of Gershon.AI · Company?")) return;
+    if (!confirm("Sign out of Company by Gershon.AI?")) return;
     setDemoOff();
     router.push("/");
   }
 
   return (
-    <aside className="w-64 shrink-0 bg-white border-r border-gray-200 min-h-screen sticky top-0 h-screen flex flex-col">
-      {/* Brand wordmark */}
-      <div className="px-5 pt-5 pb-4 border-b border-gray-100">
-        <Link href="/" className="flex items-center gap-2 group">
-          <Activity size={22} className="text-[color:var(--brand)]" />
-          <span className="text-xl font-extrabold tracking-tight text-[color:var(--brand)] group-hover:opacity-80 transition-opacity">
-            Gershon.AI
-          </span>
-        </Link>
-        <div className="text-[10px] font-bold tracking-[0.18em] text-gray-500 mt-1 ml-7">
-          COMPANY
+    <aside
+      className="flex-shrink-0 bg-white text-slate-600 border-r flex flex-col sticky top-0 h-screen"
+      style={{ width: 250, borderColor: "var(--side-line)" }}
+    >
+      {/* Brand block: <Product> big + BY GERSHON.AI eyebrow */}
+      <div className="flex items-center gap-2.5 px-5 pt-5 pb-1">
+        <span className="flex items-center text-[color:var(--brand)]">
+          <PulseLogo size={24} />
+        </span>
+        <h1 className="text-[1.35rem] font-extrabold tracking-tight text-[color:var(--brand)]">
+          Company
+        </h1>
+      </div>
+      <div className="px-5 pt-1.5 pb-4 mb-1 border-b" style={{ borderColor: "var(--side-line)" }}>
+        <div className="text-[0.66rem] font-bold tracking-[0.13em] text-slate-400 uppercase">
+          by Gershon.AI
         </div>
-        <div className="ml-7 mt-1">
-          <div className="text-xs text-gray-500 font-medium">v{APP_VERSION}</div>
-          {APP_BUILT_AT && (
-            <div className="text-[10px] text-gray-400 mt-0.5 leading-tight">{fmtTimestamp(APP_BUILT_AT)}</div>
-          )}
+        <div className="text-[0.9rem] font-bold text-slate-700 mt-2">
+          v{APP_VERSION}
+        </div>
+        <div className="text-[0.74rem] text-slate-400 mt-0.5">
+          Last release: {RELEASE_DATE || "—"}
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto">
+      {/* Scrollable nav */}
+      <nav className="flex-1 overflow-y-auto flex flex-col gap-0.5 px-3 py-1.5">
         {sections.map((section, si) => (
-          <div key={si} className={si > 0 ? "mt-6" : ""}>
+          <div key={si}>
             {section.heading && (
-              <div className="px-3 mb-2 text-[10px] font-bold tracking-[0.16em] text-gray-400 uppercase">
+              <div className="text-[0.66rem] font-bold tracking-[0.13em] text-slate-400 uppercase px-3 pt-4 pb-1.5">
                 {section.heading}
               </div>
             )}
-            <ul className="space-y-1">
-              {section.items.map(({ href, label, icon: Icon, match }) => {
-                const active = match(pathname);
-                return (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                        active
-                          ? "bg-[color:var(--brand)] text-white shadow-sm"
-                          : "text-gray-600 hover:bg-[color:var(--brand-light)] hover:text-[color:var(--brand)]"
-                      }`}
-                    >
-                      <Icon size={17} className={active ? "text-white" : "text-gray-400"} />
-                      <span>{label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            {section.items.map(({ href, label, icon: Icon, match }) => {
+              const active = match(pathname);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[9px] text-[0.92rem] font-semibold w-full text-left transition-colors ${
+                    active
+                      ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                  }`}
+                >
+                  <span className="w-5 flex items-center justify-center shrink-0">
+                    <Icon size={18} />
+                  </span>
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
           </div>
         ))}
       </nav>
 
-      {/* Footer — Demo + Logout, always docked at bottom-right of sidebar */}
-      <div className="px-3 py-3 border-t border-gray-100 flex flex-col gap-2">
+      {/* Footer — Settings, Demo, Log out, domain (in that order) */}
+      <div className="px-3.5 pt-3 pb-2 border-t flex flex-col gap-1.5" style={{ borderColor: "var(--side-line)" }}>
+        {/* Settings — first */}
+        <Link
+          href="/settings"
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold transition-colors ${
+            pathname.startsWith("/settings")
+              ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
+              : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+          }`}
+        >
+          <span className="w-5 flex items-center justify-center shrink-0">
+            <SettingsIcon size={18} />
+          </span>
+          Settings
+        </Link>
+
+        {/* Demo mode — middle */}
         <button
           onClick={toggleDemo}
           aria-pressed={demoMode}
-          className={`flex items-center justify-center gap-2 px-3 py-2 rounded-full text-sm font-bold transition-colors ${
+          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold text-left transition-colors ${
             demoMode
-              ? "bg-amber-500 text-white hover:bg-amber-600 shadow-sm"
-              : "bg-[color:var(--brand-light)] text-[color:var(--brand)] border border-[color:var(--brand-light)] hover:border-[color:var(--brand)]"
+              ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
+              : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
           }`}
-          title={demoMode ? "Exit demo mode and return to live data" : "Show impressive simulated data for demos"}
+          title={demoMode ? "Currently in demo mode — click to switch back to live data" : "Show a bundled fake dataset for demos (never writes to the backend)"}
         >
-          <Sparkles size={14} />
-          {demoMode ? "Exit Demo" : "Demo Mode"}
+          <span className="w-5 flex items-center justify-center shrink-0">
+            <Sparkles size={18} />
+          </span>
+          {demoMode ? "Live data" : "Demo mode"}
         </button>
+
+        {/* Log out — very bottom, red-accented */}
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center gap-2 px-3 py-2 rounded-full text-sm font-bold text-gray-700 bg-white border border-gray-200 hover:border-[color:var(--danger)] hover:text-[color:var(--danger)] transition-colors"
-          title="Sign out"
+          className="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold text-left text-[color:var(--danger)] hover:bg-[color:var(--danger-soft)] hover:text-[#b91c1c] transition-colors"
         >
-          <LogOut size={14} />
-          Logout
+          <span className="w-5 flex items-center justify-center shrink-0">
+            <LogOut size={18} />
+          </span>
+          Log out
         </button>
-        <div className="text-[10px] text-gray-400 text-center mt-1">company.gershonCRM.com</div>
+
+        {/* Domain */}
+        <div className="text-center text-[0.72rem] text-slate-400 pt-1.5 pb-1">
+          company.gershonCRM.com
+        </div>
       </div>
     </aside>
   );
