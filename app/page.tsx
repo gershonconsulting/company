@@ -11,6 +11,7 @@ import {
   PieChart, Pie, Legend,
 } from "recharts";
 import InteractiveMonthlyBar from "@/components/InteractiveMonthlyBar";
+import FreshnessWidget from "@/components/FreshnessWidget";
 import {
   useAnalytics, LoadingShim, ErrorShim, fmtMonth,
 } from "@/components/analytics-shared";
@@ -248,6 +249,19 @@ export default function Dashboard() {
                   {bd.data && total > 0 && (bd.data.high / total) < 0.1 && " High Priority is thin — focus qualification."}
                 </p>
               </div>
+            </div>
+          </section>
+
+          {/* ── Freshness: how much we're actually working on leads ── */}
+          <section>
+            <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">Freshness — how much we work each lead</h2>
+            <div className="bg-white rounded-xl shadow p-5 border-t-4 border-[color:var(--brand)]">
+              <FreshnessWidget counts={an.data!.freshness} />
+              <p className="text-xs text-gray-500 mt-3">
+                <strong className="text-gray-700">Read:</strong>{" "}
+                &quot;Working&quot; leads (touched in the last 30 days) are where the pipeline actually gets moved.
+                &quot;Cold&quot; leads (untouched &gt; 30 days) are candidates for cleanup or re-engagement.
+              </p>
             </div>
           </section>
 

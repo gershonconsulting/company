@@ -1,6 +1,7 @@
 "use client";
 
-import { Clock, AlertTriangle, ListChecks } from "lucide-react";
+import { Clock, AlertTriangle, ListChecks, Snowflake } from "lucide-react";
+import FreshnessWidget from "@/components/FreshnessWidget";
 import {
   useAnalytics, LoadingShim, ErrorShim, KpiTile,
   StaleLead,
@@ -106,6 +107,16 @@ export default function WarningsPanel() {
           icon={<AlertTriangle size={16} className="text-blue-500" />}
           sub={<span className="text-gray-500">target ≥ 5%</span>}
         />
+      </div>
+
+      {/* Freshness snapshot */}
+      <div className="bg-white rounded-xl shadow p-5 border-t-4 border-[color:var(--brand)]">
+        <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
+          <Snowflake size={16} className="text-[color:var(--brand)] mr-2" />
+          Freshness — how much we work each lead
+        </h3>
+        <p className="text-xs text-gray-400 mb-3">Click a bar to see the leads in that bucket. Cold + Stale + Never = candidates for cleanup.</p>
+        <FreshnessWidget counts={data.freshness} />
       </div>
 
       {/* Warning bullets */}

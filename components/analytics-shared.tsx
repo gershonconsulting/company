@@ -8,7 +8,16 @@ import { AlertTriangle } from "lucide-react";
 export interface MonthlyTrend  { month: string; count: number; }
 export interface StaleLead     { key: string; name: string; stageName: string; priority: string; daysInactive: number; lastUpdated: string; }
 export interface HotLead       { key: string; name: string; stageName: string; daysSinceTouch: number; }
-export interface FunnelStage   { stageKey: string; stageName: string; count: number; isClosing: boolean; isRemoved?: boolean; }
+export interface FunnelStage   { stageKey: string; stageName: string; count: number; isClosing: boolean; isRemoved?: boolean; order?: number; }
+
+export interface FreshnessCounts {
+  high:   number;
+  medium: number;
+  low:    number;
+  stale:  number;
+  never:  number;
+  total:  number;
+}
 
 export interface PipelineAnalytics {
   monthlyHighIntake:     MonthlyTrend[];
@@ -22,6 +31,7 @@ export interface PipelineAnalytics {
   totalLeads:            number;
   closingStageNames:     string[];
   removedStageNames:     string[];
+  freshness:             FreshnessCounts;
   staleThresholdDays:    number;
   monthsConsidered:      number;
 }

@@ -1,20 +1,25 @@
 // Settings live in the SETTINGS Cloudflare KV namespace, bound in
-// wrangler.jsonc. The /settings page reads & writes them through the API
-// routes in app/api/. This avoids the "no writable filesystem" limitation of
-// Cloudflare Pages (no fs.writeFile available at runtime).
+// wrangler.jsonc. See GERSHON_SIDEBAR_STANDARD.md for the platform
+// conventions this file follows.
 
 import { getRequestContext } from "@cloudflare/next-on-pages";
 
-// Streak credentials + business assumptions used to compute pipeline value
 export type ConfigKey =
+  // Streak credentials
   | "STREAK_API_KEY"
   | "STREAK_PIPELINE_KEY"
+  // Business assumptions (Values tab)
   | "AVG_INVOICE_VALUE"
   | "AVG_INVOICES_PER_CLIENT"
   | "AVG_CLIENT_LIFETIME_MO"
   | "CONVERSION_RATE_HIGH"
   | "CONVERSION_RATE_MEDIUM"
-  | "CONVERSION_RATE_LOW";
+  | "CONVERSION_RATE_LOW"
+  // Weekly report via Resend
+  | "RESEND_API_KEY"
+  | "REPORT_FROM"
+  | "REPORT_TO"
+  | "REPORT_TRIGGER_KEY";
 
 const ALL_KEYS: ConfigKey[] = [
   "STREAK_API_KEY",
@@ -25,6 +30,10 @@ const ALL_KEYS: ConfigKey[] = [
   "CONVERSION_RATE_HIGH",
   "CONVERSION_RATE_MEDIUM",
   "CONVERSION_RATE_LOW",
+  "RESEND_API_KEY",
+  "REPORT_FROM",
+  "REPORT_TO",
+  "REPORT_TRIGGER_KEY",
 ];
 
 interface KVNamespace {
@@ -61,12 +70,8 @@ export async function setConfigValues(
   const ops: Promise<void>[] = [];
   for (const [k, v] of Object.entries(values)) {
     if (v === undefined || v === null) continue;
-    if (v === "") {
-      // Delete the key explicitly when emptied
-      ops.push(settings.delete(k));
-    } else {
-      ops.push(settings.put(k, v));
-    }
+    if (v === "") ops.push(settings.delete(k));
+    else          ops.push(settings.put(k, v));
   }
   await Promise.all(ops);
 }
