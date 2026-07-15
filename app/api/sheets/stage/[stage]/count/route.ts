@@ -17,7 +17,7 @@ export async function GET(
 ) {
   try {
     const { stage } = await params;
-    const wanted = decodeURIComponent(stage ?? "").trim().toLowerCase();
+    const wanted = normalizeStageName(decodeURIComponent(stage ?? ""));
     if (!wanted) return plain("0");
 
     const config = await getConfig();
@@ -30,12 +30,13 @@ export async function GET(
       fetchPipelineBoxes(apiKey, pipelineKey),
     ]);
 
-    // Build stageKey -> stageName map (case-insensitive name comparison)
+    // Build stageKey -> stageName map. Match tolerantly so Streak stage names
+    // with numeric prefixes ("5. Proposal Sent") still match a plain query
+    // ("Proposal Sent"). We normalize both sides identically.
     const matchingKeys = new Set<string>();
     const stages = (schema as { stages?: Record<string, { name?: string }> }).stages ?? {};
     for (const [key, val] of Object.entries(stages)) {
-      const name = (val?.name ?? "").trim().toLowerCase();
-      if (name === wanted) matchingKeys.add(key);
+      if (normalizeStageName(val?.name ?? "") === wanted) matchingKeys.add(key);
     }
 
     if (matchingKeys.size === 0) return plain("0");
@@ -48,6 +49,18 @@ export async function GET(
   } catch {
     return plain("0");
   }
+}
+
+// Normalize a Streak stage name for tolerant matching.
+// - strip leading number+dot prefix ("5. Proposal Sent" -> "Proposal Sent")
+// - collapse internal whitespace
+// - lowercase and trim
+function normalizeStageName(s: string): string {
+  return s.trim()
+          .replace(/^\d+\s*[.)\-:]\s*/, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .toLowerCase();
 }
 
 function plain(body: string) {
