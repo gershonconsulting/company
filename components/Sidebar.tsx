@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, LineChart, Layers, AlertTriangle,
   DollarSign, Target, Settings as SettingsIcon, Sparkles, LogOut, FileBarChart,
@@ -24,7 +24,6 @@ function PulseLogo({ size = 24 }: { size?: number }) {
 
 export default function Sidebar() {
   const pathname = usePathname() ?? "/";
-  const router   = useRouter();
   const { demoMode, toggle: toggleDemo, setOff: setDemoOff } = useDemo();
 
   const sections: { heading?: string; items: Item[] }[] = [
@@ -51,11 +50,19 @@ export default function Sidebar() {
     },
   ];
 
-  function handleLogout() {
+  async function handleLogout() {
     if (!confirm("Sign out of Company by Gershon.AI?")) return;
     setDemoOff();
-    router.push("/");
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Fall through — we navigate to /login either way.
+    }
+    window.location.href = "/login";
   }
+
+  // The sign-in screen renders standalone, without the app shell.
+  if (pathname === "/login") return null;
 
   return (
     <aside
