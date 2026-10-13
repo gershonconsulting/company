@@ -2,6 +2,59 @@
 
 import { Clock, AlertTriangle, ListChecks, Snowflake } from "lucide-react";
 import FreshnessWidget from "@/components/FreshnessWidget";
+import Link from "next/link";
+import { ExternalLink, ArrowRight } from "lucide-react";
+import { useActions, ACTION_META, TONE, type ActionKind } from "@/components/useActions";
+
+const SALES_WARNINGS: { kind: ActionKind; title: string; why: string }[] = [
+  { kind: "reply",        title: "Prospects waiting on our reply", why: "They wrote last. Every day without an answer cools the deal." },
+  { kind: "closing",      title: "Deals in closing with no recent touch", why: "Proposal / negotiation / closing stage, untouched 10+ days." },
+  { kind: "overdue",      title: "Overdue tasks", why: "Promised follow-ups that didn't happen." },
+  { kind: "no-next-step", title: "Active leads with no next step", why: "No open Streak task — nothing will happen unless someone schedules it." },
+];
+
+function SalesWarnings() {
+  const { data } = useActions();
+  if (!data) return null;
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {SALES_WARNINGS.map((w) => {
+        const rows = data.leads.filter((l) => l.reasons.some((r) => r.kind === w.kind)).slice(0, 5);
+        const n = data.counts[w.kind];
+        return (
+          <div key={w.kind} className={`bg-white rounded-xl shadow p-5 border-t-4 ${n > 0 ? (ACTION_META[w.kind].tone === "red" ? "border-red-500" : "border-amber-500") : "border-emerald-500"}`}>
+            <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2">
+              <span className={`text-xs font-extrabold px-2 py-0.5 rounded-full border ${n > 0 ? TONE[ACTION_META[w.kind].tone] : "bg-emerald-50 text-emerald-700 border-emerald-200"}`}>{n}</span>
+              {w.title}
+            </h3>
+            <p className="text-xs text-gray-400 mt-1 mb-2">{w.why}</p>
+            {rows.length === 0 ? <p className="text-sm text-emerald-700">All clear.</p> : (
+              <ul className="divide-y divide-gray-100">
+                {rows.map((l) => {
+                  const r = l.reasons.find((x) => x.kind === w.kind)!;
+                  return (
+                    <li key={l.key} className="py-1.5 text-sm flex items-center gap-2">
+                      <a href={l.url} target="_blank" rel="noopener noreferrer" className="font-medium text-gray-800 hover:text-[color:var(--brand)] inline-flex items-center gap-1 truncate">
+                        {l.name} <ExternalLink size={11} className="text-gray-400 shrink-0" />
+                      </a>
+                      <span className="text-xs text-gray-500 truncate">{r.text}</span>
+                      {l.ownerNames[0] && <span className="ml-auto text-xs text-gray-400 shrink-0">{l.ownerNames[0]}</span>}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+            {n > rows.length && (
+              <Link href="/today" className="inline-flex items-center gap-1 text-xs font-bold text-[color:var(--brand)] mt-2 hover:underline">
+                See all {n} on Today <ArrowRight size={12} />
+              </Link>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 import {
   useAnalytics, LoadingShim, ErrorShim, KpiTile,
   StaleLead,
@@ -84,6 +137,9 @@ export default function WarningsPanel() {
 
   return (
     <div className="flex flex-col gap-6">
+      <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase -mb-3">Sales warnings — act on these first</h2>
+      <SalesWarnings />
+      <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase -mb-3">Pipeline hygiene</h2>
       {/* Top-line KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         <KpiTile

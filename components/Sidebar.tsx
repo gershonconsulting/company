@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, LineChart, Layers, AlertTriangle,
-  DollarSign, Target, Settings as SettingsIcon, Sparkles, LogOut, FileBarChart,
+  DollarSign, Target, Settings as SettingsIcon, Sparkles, LogOut, FileBarChart, ListTodo,
 } from "lucide-react";
 import { APP_VERSION, RELEASE_DATE } from "@/lib/version";
 import { useDemo } from "@/lib/demo-context";
@@ -30,6 +30,7 @@ export default function Sidebar() {
     {
       items: [
         { href: "/",           label: "Dashboard",  icon: LayoutDashboard, match: (p) => p === "/" },
+        { href: "/today",      label: "Today",      icon: ListTodo,        match: (p) => p.startsWith("/today") },
       ],
     },
     {
@@ -38,7 +39,7 @@ export default function Sidebar() {
         { href: "/analysis",   label: "Analysis",   icon: LineChart,     match: (p) => p.startsWith("/analysis") },
         { href: "/swot",       label: "SWOT",       icon: Layers,        match: (p) => p.startsWith("/swot") },
         { href: "/warnings",   label: "Warnings",   icon: AlertTriangle, match: (p) => p.startsWith("/warnings") },
-        { href: "/values",     label: "Values",     icon: DollarSign,    match: (p) => p.startsWith("/values") },
+        { href: "/values",     label: "Pipeline Value",     icon: DollarSign,    match: (p) => p.startsWith("/values") },
         { href: "/objectives", label: "Objectives", icon: Target,        match: (p) => p.startsWith("/objectives") },
       ],
     },

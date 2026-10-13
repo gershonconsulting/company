@@ -1,4 +1,5 @@
 import type { StreakBox, PipelineSchema, PriorityFieldMapping } from "./streak";
+import { lastTouchAt } from "./momentum";
 
 // ── Configuration ─────────────────────────────────────────────────────────
 const MONTHS_BACK             = 12;
@@ -209,12 +210,14 @@ export function computeAnalytics(
       });
     }
 
-    if (pri === "High" && lastUpd > 0) {
+    const isRemovedStage = box.stageKey ? removedStageKeys.has(box.stageKey) : false;
+    const touch = lastTouchAt(box as unknown as StreakBox & Record<string, unknown>);
+    if (pri === "High" && touch > 0 && !isRemovedStage) {
       hot.push({
         key:            box.key,
         name:           box.name ?? "(unnamed)",
         stageName:      stageMap.get(box.stageKey ?? "") ?? "Unknown",
-        daysSinceTouch: Math.floor((now - lastUpd) / D),
+        daysSinceTouch: Math.max(0, Math.floor((now - touch) / D)),
       });
     }
   }

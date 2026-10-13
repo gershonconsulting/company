@@ -26,7 +26,7 @@ export const ACTION_META: Record<ActionKind, { label: string; weight: number; to
   "no-next-step": { label: "No next step",           weight: 30,  tone: "indigo" },
 };
 
-export interface ActionReason { kind: ActionKind; text: string; todo: string; }
+export interface ActionReason { kind: ActionKind; text: string; todo: string; weight?: number; }
 
 export interface LeadAction {
   key:        string;
@@ -169,7 +169,10 @@ export function computeActions(
     if (overdueTasks > 0) {
       const due = num(b.earliestOverdueTaskDueDate);
       const d = due ? Math.max(0, Math.floor((now - due) / DAY)) : null;
-      reasons.push({ kind: "overdue", text: `${plural(overdueTasks, "task")} overdue${d !== null ? ` (${plural(d, "day")})` : ""}`, todo: "Do it or reschedule it in Streak" });
+      const old = d !== null && d > 30;
+      reasons.push(old
+        ? { kind: "overdue", text: `${plural(overdueTasks, "old task")} overdue (${plural(d!, "day")})`, todo: "Close it or set a new date in Streak", weight: 20 }
+        : { kind: "overdue", text: `${plural(overdueTasks, "task")} overdue${d !== null ? ` (${plural(d, "day")})` : ""}`, todo: "Do it today or reschedule it in Streak" });
       overdue++;
     }
     // 3. Opened our last email several times, no reply since we sent it
@@ -193,7 +196,7 @@ export function computeActions(
     for (const r of reasons) counts[r.kind]++;
 
     const prioBonus = pri === "High" ? 25 : pri === "Medium" ? 10 : 0;
-    const score = reasons.reduce((s, r) => s + ACTION_META[r.kind].weight, 0) + prioBonus + Math.round(prob * 40);
+    const score = reasons.reduce((s, r) => s + (r.weight ?? ACTION_META[r.kind].weight), 0) + prioBonus + Math.round(prob * 40);
     const value = Math.round(clv * prob);
 
     const sv = byStage.get(stageName) ?? { stageName, order: stageOrder(stageName), count: 0, prob, value: 0 };

@@ -1,0 +1,22 @@
+name: Weekly pipeline report
+
+# Sends the weekly Company pipeline report (recipient set in Settings —
+# report@gershonconsulting.com) every Monday 08:00 New York time.
+# Needs repo secret REPORT_TRIGGER_KEY (value shown to admins on /settings).
+on:
+  schedule:
+    - cron: "0 12 * * MON"
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger weekly report
+        env:
+          KEY: ${{ secrets.REPORT_TRIGGER_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then echo "REPORT_TRIGGER_KEY secret is not set on this repo." >&2; exit 1; fi
+          RESP=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -H "X-Report-Key: $KEY" "https://company.gershoncrm.com/api/reports/weekly")
+          echo "HTTP $RESP"; cat /tmp/resp.json
+          [ "$RESP" = "200" ]

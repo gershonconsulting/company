@@ -2,6 +2,10 @@
 
 import { Target, Layers } from "lucide-react";
 import { useAnalytics, LoadingShim, ErrorShim, MonthlyTrend, FunnelStage, HotLead } from "@/components/analytics-shared";
+import { useActions, fmtUSD, type ActionsPayload } from "@/components/useActions";
+import type { Momentum } from "@/lib/momentum";
+
+const pl = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
 interface VpAnalysisProps {
   total: number;
@@ -65,9 +69,11 @@ interface SwotProps {
   funnel: FunnelStage[];
   monthlyHighIntake: MonthlyTrend[];
   monthlyReachedClosing: MonthlyTrend[];
+  momentum?: Momentum;
+  actions?: ActionsPayload | null;
 }
 
-function SWOT({ total, hotLeads, staleLeadsTotal, funnel, monthlyHighIntake, monthlyReachedClosing }: SwotProps) {
+function SWOT({ total, hotLeads, staleLeadsTotal, funnel, monthlyHighIntake, monthlyReachedClosing, momentum, actions }: SwotProps) {
   const strengths: string[] = [];
   const weaknesses: string[] = [];
   const opportunities: string[] = [];
@@ -77,25 +83,40 @@ function SWOT({ total, hotLeads, staleLeadsTotal, funnel, monthlyHighIntake, mon
   const recentHigh  = monthlyHighIntake.slice(-3).reduce((s, d) => s + d.count, 0);
   const recentClose = monthlyReachedClosing.slice(-3).reduce((s, d) => s + d.count, 0);
 
-  if (inClosing >= 5)         strengths.push(`${inClosing} leads in closing stages — close-able pipe`);
-  if (recentClose > 0)        strengths.push(`${recentClose} leads reached closing in the last 3 months`);
+  if (inClosing >= 5)         strengths.push(`${pl(inClosing, "lead")} in closing stages — close-able pipe`);
+  if (recentClose > 0)        strengths.push(`${pl(recentClose, "lead")} reached closing in the last 3 months`);
   if (hotLeads.length >= 5)   strengths.push(`${hotLeads.length} hot leads with recent activity`);
   if (staleLeadsTotal === 0)  strengths.push(`Pipeline is clean — no stale leads`);
   if (strengths.length === 0) strengths.push("Pipeline data is clean enough to act on");
 
-  if (staleLeadsTotal > 5)                       weaknesses.push(`${staleLeadsTotal} leads sitting too long`);
+  if (staleLeadsTotal > 5)                       weaknesses.push(`${pl(staleLeadsTotal, "lead")} untouched for 90+ days`);
   if (inClosing < total * 0.05 && total > 20)    weaknesses.push(`Closing stages are thin (<5% of pipeline)`);
   if (recentClose === 0 && total > 20)           weaknesses.push(`No leads moved into closing in the last 3 months`);
+  const mm = (k: string) => momentum?.metrics.find((m) => m.key === k);
+  const leadsM = mm("leads"), touchM = mm("interactions"), movesM = mm("moves");
+  if (actions) {
+    const valClosing = actions.value.byStage.filter((s) => /proposal|negotiat|clos/i.test(s.stageName)).reduce((a, s) => a + s.value, 0);
+    if (valClosing > 0) strengths.push(`${fmtUSD(valClosing)} of weighted value sits in closing stages`);
+    if (actions.counts.reply > 0)    weaknesses.push(`${pl(actions.counts.reply, "prospect")} waiting on our reply`);
+    if (actions.counts.closing > 0)  weaknesses.push(`${pl(actions.counts.closing, "closing-stage deal")} untouched for 10+ days`);
+    if (actions.counts["no-next-step"] > 0) weaknesses.push(`${pl(actions.counts["no-next-step"], "active lead")} with no next step scheduled`);
+    if (actions.counts["hot-open"] > 0) opportunities.push(`${pl(actions.counts["hot-open"], "prospect")} opened our last email several times — call them now`);
+  }
+  if (touchM?.coverage && touchM.coverage.pct30 < 50) weaknesses.push(`Only ${touchM.coverage.pct30}% of the pipeline was worked in the last 30 days`);
   if (weaknesses.length === 0)                   weaknesses.push("None obvious from the data");
 
   if (recentHigh > recentClose && recentHigh > 0) opportunities.push(`More high-priority intake than closing — qualify aggressively`);
   if (funnel.slice(0, 2).reduce((s, f) => s + f.count, 0) > total * 0.4) opportunities.push("Top-of-funnel is rich — invest in qualification");
-  if (hotLeads.length >= 3)                       opportunities.push(`Top ${hotLeads.length} hot leads can be pushed forward this week`);
+  if (hotLeads.length >= 3)                       opportunities.push(`${pl(hotLeads.length, "hot lead")} can be pushed forward this week`);
   if (opportunities.length === 0)                 opportunities.push("Open new top-of-funnel sources to grow intake");
 
   if (staleLeadsTotal > total * 0.3) threats.push(`>30% of pipeline is stale — risk of pipeline rot`);
   if (recentClose < monthlyReachedClosing.slice(-6, -3).reduce((s, d) => s + d.count, 0)) threats.push("Closing-stage velocity has dropped vs prior quarter");
   if (recentHigh < monthlyHighIntake.slice(-6, -3).reduce((s, d) => s + d.count, 0)) threats.push("High-priority intake is slowing");
+  if (leadsM && (leadsM.status === "slowing" || leadsM.status === "softening"))
+    threats.push(`New-lead intake is ${leadsM.changePct}% below our best quarter${leadsM.daysSinceLast !== null && leadsM.daysSinceLast >= 7 ? ` — none in ${leadsM.daysSinceLast} days` : ""}`);
+  if (movesM && (movesM.status === "slowing" || movesM.status === "softening"))
+    threats.push(`Stage moves are ${movesM.changePct}% below our best quarter — deals are stalling`);
   if (threats.length === 0) threats.push("None acute right now — maintain discipline");
 
   const Quad = ({ title, items, color }: { title: string; items: string[]; color: "green" | "red" | "blue" | "yellow" }) => {
@@ -132,6 +153,7 @@ function SWOT({ total, hotLeads, staleLeadsTotal, funnel, monthlyHighIntake, mon
 
 export default function SwotPanel() {
   const { data, error, loading } = useAnalytics();
+  const acts = useActions();
   if (loading) return <LoadingShim label="Loading SWOT…" />;
   if (error)   return <ErrorShim message={error} />;
   if (!data)   return null;
@@ -165,6 +187,8 @@ export default function SwotPanel() {
           funnel={data.funnel}
           monthlyHighIntake={data.monthlyHighIntake}
           monthlyReachedClosing={data.monthlyReachedClosing}
+          momentum={data.momentum}
+          actions={acts.data}
         />
       </div>
     </div>
