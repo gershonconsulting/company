@@ -57,14 +57,18 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
         <p className="text-sm text-gray-500">/ week now</p>
       </div>
       <p className="text-sm text-gray-500 mt-0.5">
-        Normal pace <strong className="text-gray-700 tabular-nums">{m.normalPerWeek}</strong> / week
+        Target <strong className="text-gray-700 tabular-nums">{m.targetPerWeek}</strong> / week
+        <span className="text-gray-400"> · 6-mo avg {m.normalPerWeek}</span>
       </p>
+      {m.targetFrom && (
+        <p className="text-[11px] text-gray-400">Target = our best quarter (13 weeks from {m.targetFrom})</p>
+      )}
       <div className="mt-2"><ChangePill m={m} /></div>
 
       <div style={{ width: "100%", height: 130 }} className="mt-3">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chart} margin={{ top: 6, right: 4, left: -24, bottom: 0 }}>
-            <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#64748b" }} interval={2} tickLine={false} axisLine={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#64748b" }} interval={5} tickLine={false} axisLine={false} />
             <YAxis tick={{ fontSize: 10, fill: "#64748b" }} allowDecimals={false} tickLine={false} axisLine={false} />
             <Tooltip
               cursor={{ fill: "#f1f5f9" }}
@@ -72,9 +76,9 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
               formatter={(v) => [v as number, m.label]}
               labelFormatter={(_, p) => (p?.[0]?.payload as { range?: string } | undefined)?.range ?? ""}
             />
-            {m.normalPerWeek > 0 && (
-              <ReferenceLine y={m.normalPerWeek} stroke="#334155" strokeDasharray="4 3"
-                label={{ value: "normal", position: "insideTopLeft", fontSize: 10, fill: "#334155" }} />
+            {m.targetPerWeek > 0 && (
+              <ReferenceLine y={m.targetPerWeek} stroke="#334155" strokeDasharray="4 3"
+                label={{ value: "target", position: "insideTopRight", fontSize: 10, fill: "#334155" }} />
             )}
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {chart.map((d, i) => <Cell key={i} fill={d.recent ? recentColor : "#c7d2fe"} />)}
@@ -83,6 +87,11 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
         </ResponsiveContainer>
       </div>
       <p className="text-[11px] text-gray-400 mt-1">{EXPLAIN[m.key]}</p>
+      {!m.reliable && (
+        <p className="text-[11px] text-amber-700 mt-1">
+          Streak isn&apos;t sending email/call timestamps for most leads, so this weekly view is incomplete — use the exact email count below.
+        </p>
+      )}
       <p className="text-xs text-gray-600 mt-2">
         Last 7 days: <strong className="tabular-nums">{m.lastWeek}</strong>
         {m.daysSinceLast !== null && (
@@ -138,7 +147,7 @@ export default function MomentumPanel({ momentum }: { momentum: Momentum }) {
           <div>
             <p className={`text-lg font-extrabold tracking-tight ${s.text}`}>{momentum.headline}</p>
             <p className="text-xs text-gray-500 mt-1">
-              Last {RECENT_WEEKS} weeks vs the 8 weeks before. Rolling 7-day windows, so a half-finished month never hides a slowdown.
+              Last {RECENT_WEEKS} weeks vs our best quarter of the past year — a slow summer never becomes the new normal. Rolling 7-day windows.
             </p>
             {momentum.actions.length > 0 && (
               <div className="mt-3">

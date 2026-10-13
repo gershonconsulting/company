@@ -112,9 +112,9 @@ export const DEMO_ANALYTICS: PipelineAnalytics = {
 
 // A pipeline that was healthy for 8 weeks and has been slowing for 4.
 function demoMomentum() {
-  const leads = [14, 12, 15, 13, 16, 14, 13, 15,  9, 7, 5, 3];
-  const touch = [62, 58, 66, 61, 64, 60, 63, 59, 48, 41, 37, 30];
-  const moves = [11, 9, 12, 10, 11, 12, 10, 11,  7, 6, 4, 2];
+  const leads = [9, 11, 10, 12, 14, 15, 13, 16, 17, 15, 14, 16, 13, 12, 14, 12, 15, 13, 16, 14, 13, 15,  9, 7, 5, 3];
+  const touch = [50, 54, 57, 60, 63, 66, 68, 70, 67, 65, 64, 62, 60, 61, 62, 58, 66, 61, 64, 60, 63, 59, 48, 41, 37, 30];
+  const moves = [8, 9, 10, 11, 12, 13, 12, 13, 12, 11, 12, 10, 11, 10, 11, 9, 12, 10, 11, 12, 10, 11,  7, 6, 4, 2];
   const now = Date.now();
   const weeks: MomentumWeek[] = leads.map((_, i) => {
     const end = now - (leads.length - 1 - i) * 7 * 86400_000;

@@ -298,7 +298,7 @@ function momentumBlock(m: Momentum): string {
     return `<tr>
       <td style="padding:5px 8px;font-size:13px;color:#374151;">${escapeHtml(x.label)}</td>
       <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:#111;">${x.recentPerWeek}/wk</td>
-      <td style="padding:5px 8px;font-size:13px;text-align:right;color:#64748b;">normal ${x.normalPerWeek}/wk</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;color:#64748b;">target ${x.targetPerWeek}/wk</td>
       <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:${c};">${pct}</td>
     </tr>`;
   }).join("");
@@ -308,7 +308,7 @@ function momentumBlock(m: Momentum): string {
   return `<tr><td style="padding:12px 28px 0;">
     <div style="padding:14px 16px;background:${bg};border-left:4px solid ${color};border-radius:8px;">
       <div style="font-size:15px;font-weight:800;color:${color};">${escapeHtml(m.headline)}</div>
-      <div style="font-size:11px;color:#64748b;margin-top:2px;">Last 4 weeks vs the 8 weeks before (rolling 7-day windows)</div>
+      <div style="font-size:11px;color:#64748b;margin-top:2px;">Last 4 weeks vs our best quarter of the past year (rolling 7-day windows)</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">${rows}</table>
       ${actions}
     </div>
