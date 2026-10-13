@@ -5,6 +5,7 @@ import {
   buildPriorityMapping, resolvePipelineKey, computeBreakdown,
 } from "@/lib/streak";
 import { computeAnalytics } from "@/lib/analytics";
+import { computeMomentum, type Momentum } from "@/lib/momentum";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -52,6 +53,8 @@ async function run(req: NextRequest) {
     const mapping   = buildPriorityMapping(schema);
     const breakdown = computeBreakdown(boxes, mapping);
     const analytics = computeAnalytics(boxes, schema, mapping);
+    const removedKeys = new Set(analytics.funnel.filter((f) => f.isRemoved).map((f) => f.stageKey));
+    const momentum  = computeMomentum(boxes, Date.now(), removedKeys);
 
     // Compose narrative
     const now    = new Date();
@@ -75,6 +78,7 @@ async function run(req: NextRequest) {
       clNow, clPrev,
       rmNow, rmPrev,
       activeFollowUpCount,
+      momentum,
     });
 
     // Send via Resend REST API
@@ -126,6 +130,7 @@ interface RenderArgs {
   clNow: number;  clPrev: number;
   rmNow: number;  rmPrev: number;
   activeFollowUpCount: number;
+  momentum: Momentum;
 }
 
 function renderHTML(a: RenderArgs): string {
@@ -182,7 +187,9 @@ function renderHTML(a: RenderArgs): string {
         <div style="font-size:14px;color:#64748b;margin-top:2px;">Weekly Pipeline Report · ${a.week}</div>
       </td></tr>
 
-      <!-- KPI hero -->
+${momentumBlock(a.momentum)}
+
+            <!-- KPI hero -->
       <tr><td style="padding:12px 28px 0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
           ${kpiCell("Active leads",     String(bd.total), `${inClosing} in closing`, "#6366f1")}
@@ -280,4 +287,30 @@ function freshRow(label: string, range: string, count: number, total: number, co
 
 function escapeHtml(s: string): string {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+}
+
+function momentumBlock(m: Momentum): string {
+  const color = m.overall === "slowing" ? "#dc2626" : m.overall === "softening" ? "#f59e0b" : m.overall === "growing" ? "#10b981" : "#6366f1";
+  const bg    = m.overall === "slowing" ? "#fef2f2" : m.overall === "softening" ? "#fffbeb" : m.overall === "growing" ? "#ecfdf5" : "#eef2ff";
+  const rows = m.metrics.map((x) => {
+    const c = x.status === "slowing" ? "#dc2626" : x.status === "softening" ? "#f59e0b" : x.status === "growing" ? "#10b981" : "#64748b";
+    const pct = x.changePct === null ? "n/a" : `${x.changePct > 0 ? "+" : ""}${x.changePct}%`;
+    return `<tr>
+      <td style="padding:5px 8px;font-size:13px;color:#374151;">${escapeHtml(x.label)}</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:#111;">${x.recentPerWeek}/wk</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;color:#64748b;">normal ${x.normalPerWeek}/wk</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:${c};">${pct}</td>
+    </tr>`;
+  }).join("");
+  const actions = m.actions.length
+    ? `<div style="margin-top:8px;font-size:13px;color:#1f2937;"><strong>What we need:</strong><ul style="margin:4px 0 0 18px;padding:0;">${m.actions.map((a) => `<li style="margin:2px 0;">${escapeHtml(a)}</li>`).join("")}</ul></div>`
+    : "";
+  return `<tr><td style="padding:12px 28px 0;">
+    <div style="padding:14px 16px;background:${bg};border-left:4px solid ${color};border-radius:8px;">
+      <div style="font-size:15px;font-weight:800;color:${color};">${escapeHtml(m.headline)}</div>
+      <div style="font-size:11px;color:#64748b;margin-top:2px;">Last 4 weeks vs the 8 weeks before (rolling 7-day windows)</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">${rows}</table>
+      ${actions}
+    </div>
+  </td></tr>`;
 }

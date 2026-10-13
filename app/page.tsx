@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import InteractiveMonthlyBar from "@/components/InteractiveMonthlyBar";
 import FreshnessWidget from "@/components/FreshnessWidget";
+import MomentumPanel from "@/components/MomentumPanel";
 import {
   useAnalytics, LoadingShim, ErrorShim, fmtMonth,
 } from "@/components/analytics-shared";
@@ -145,6 +146,9 @@ export default function Dashboard() {
 
       {ready && (
         <div className="flex flex-col gap-8">
+
+          {/* ── Tier 0: Momentum — is the pipeline slowing down? ───────── */}
+          {an.data?.momentum && <MomentumPanel momentum={an.data.momentum} />}
 
           {/* ── Tier 1: Hero KPIs ─────────────────────────────────────── */}
           <section>

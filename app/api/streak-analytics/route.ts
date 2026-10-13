@@ -5,6 +5,8 @@ import {
   buildPriorityMapping, resolvePipelineKey,
 } from "@/lib/streak";
 import { computeAnalytics } from "@/lib/analytics";
+import { computeMomentum } from "@/lib/momentum";
+import { recordAndReadExact } from "@/lib/momentum-store";
 
 export const runtime  = "edge";
 export const dynamic  = "force-dynamic";
@@ -23,7 +25,10 @@ export async function GET() {
     ]);
     const mapping   = buildPriorityMapping(schema);
     const analytics = computeAnalytics(boxes, schema, mapping);
-    return NextResponse.json(analytics);
+    const removed   = new Set(analytics.funnel.filter((f) => f.isRemoved).map((f) => f.stageKey));
+    const momentum  = computeMomentum(boxes, Date.now(), removed);
+    momentum.exact  = await recordAndReadExact(boxes);
+    return NextResponse.json({ ...analytics, momentum });
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 });
   }

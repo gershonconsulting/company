@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useDemo } from "@/lib/demo-context";
 import { DEMO_ANALYTICS } from "@/lib/demo-data";
 import { AlertTriangle } from "lucide-react";
+import type { Momentum } from "@/lib/momentum";
+export type { Momentum };
 
 export interface MonthlyTrend  { month: string; count: number; }
 export interface StaleLead     { key: string; name: string; stageName: string; priority: string; daysInactive: number; lastUpdated: string; }
@@ -34,6 +36,7 @@ export interface PipelineAnalytics {
   freshness:             FreshnessCounts;
   staleThresholdDays:    number;
   monthsConsidered:      number;
+  momentum?:             Momentum;
 }
 
 export function fmtMonth(m: string): string {

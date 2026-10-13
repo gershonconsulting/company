@@ -1,3 +1,4 @@
+import { summarizeMomentum, type MomentumWeek } from "./momentum";
 // Impressive fake data for live demos.
 // Used by the "Demo Mode" toggle in the sidebar. Numbers are designed to
 // look like a healthy, growing pipeline so the platform demos well.
@@ -105,7 +106,30 @@ export const DEMO_ANALYTICS: PipelineAnalytics = {
   removedStageNames:  ["Recycled"],
   staleThresholdDays: 90,
   monthsConsidered:   12,
+  freshness: { high: 142, medium: 318, low: 401, stale: 352, never: 34, total: 1247 },
+  momentum: demoMomentum(),
 };
+
+// A pipeline that was healthy for 8 weeks and has been slowing for 4.
+function demoMomentum() {
+  const leads = [14, 12, 15, 13, 16, 14, 13, 15,  9, 7, 5, 3];
+  const touch = [62, 58, 66, 61, 64, 60, 63, 59, 48, 41, 37, 30];
+  const moves = [11, 9, 12, 10, 11, 12, 10, 11,  7, 6, 4, 2];
+  const now = Date.now();
+  const weeks: MomentumWeek[] = leads.map((_, i) => {
+    const end = now - (leads.length - 1 - i) * 7 * 86400_000;
+    const start = end - 7 * 86400_000;
+    return {
+      start: new Date(start).toISOString().slice(0, 10),
+      end:   new Date(end).toISOString().slice(0, 10),
+      label: new Date(start).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" }),
+      leads: leads[i], interactions: touch[i], moves: moves[i],
+    };
+  });
+  const m = summarizeMomentum(weeks, { leads: 2, interactions: 0, moves: 3 }, now);
+  m.exact = { trackingSince: new Date(now - 30 * 86400_000).toISOString().slice(0, 10), emailsLast7: 84, emailsPrev7: 131, sentLast7: 52, receivedLast7: 32 };
+  return m;
+}
 
 // Drill-down leads for any (metric, month) — sampling from the same name pool
 export function demoLeadsFor(metric: "intake" | "highIntake" | "closing" | "removed", month: string): Array<{
