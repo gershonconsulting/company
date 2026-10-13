@@ -5,6 +5,7 @@ import {
   CheckCircle, AlertCircle, Eye, EyeOff, Save, TestTube2, RefreshCw,
   Settings as SettingsIcon, DollarSign, Mail, Send, Copy,
 } from "lucide-react";
+import TeamAccess from "@/components/TeamAccess";
 
 type Status =
   | "idle" | "saving" | "saved" | "error"
@@ -337,6 +338,7 @@ export default function SettingsPage() {
             </p>
           </form>
         )}
+        <TeamAccess />
       </div>
     </main>
   );

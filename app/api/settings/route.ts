@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getConfig, setConfigValues, ConfigKey } from "@/lib/config";
+import { sessionFromRequest } from "@/lib/auth";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -25,8 +26,10 @@ function randomKey(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const session = await sessionFromRequest(req);
+    const isAdmin = session?.role === "admin";
     const config = await getConfig();
 
     // Auto-generate the report trigger key on first read so the scheduled
@@ -47,8 +50,8 @@ export async function GET() {
       RESEND_API_KEY:      config.RESEND_API_KEY ? "••••••••" : "",
       REPORT_FROM:         config.REPORT_FROM || "reports@gershonconsulting.com",
       REPORT_TO:           config.REPORT_TO   || "sales@gershonconsulting.com",
-      REPORT_TRIGGER_KEY:  triggerKey,
-      readonly: false,
+      REPORT_TRIGGER_KEY:  isAdmin ? triggerKey : "",
+      readonly: !isAdmin,
     };
     for (const k of BUSINESS_KEYS) out[k] = config[k] ?? "";
     return NextResponse.json(out);
@@ -59,6 +62,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const session = await sessionFromRequest(req);
+    if (session?.role !== "admin") {
+      return NextResponse.json({ error: "Only admins can change settings." }, { status: 403 });
+    }
     const body = await req.json() as Record<string, string>;
     const patch: Partial<Record<ConfigKey, string>> = {};
 
