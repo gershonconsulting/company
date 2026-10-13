@@ -26,7 +26,7 @@ const ICON = {
 
 const EXPLAIN = {
   leads:        "Leads created in the pipeline, per 7-day window.",
-  interactions: "Live leads whose latest email, call or meeting fell in that week.",
+  interactions: "Live leads by the week of their latest email, call or meeting — older bars are leads going cold.",
   moves:        "Leads whose latest stage change fell in that week.",
 };
 
@@ -36,7 +36,7 @@ function ChangePill({ m }: { m: MomentumMetric }) {
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${s.bg} ${s.text}`}>
       <Icon size={12} />
-      {m.changePct === null ? s.label : `${m.changePct > 0 ? "+" : ""}${m.changePct}% · ${s.label}`}
+      {m.coverage ? `${m.coverage.pct30}% vs ${m.coverage.targetPct}% · ${s.label}` : m.changePct === null ? s.label : `${m.changePct > 0 ? "+" : ""}${m.changePct}% · ${s.label}`}
     </span>
   );
 }
@@ -52,16 +52,32 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
         {ICON[m.key]}
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{m.label}</p>
       </div>
+      {m.coverage ? (
+        <>
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <p className="text-3xl font-extrabold text-gray-900 tracking-tight tabular-nums">{m.coverage.pct30}%</p>
+            <p className="text-sm text-gray-500">of leads touched in 30 days</p>
+          </div>
+          <p className="text-sm text-gray-500 mt-0.5">
+            Target <strong className="text-gray-700 tabular-nums">{m.coverage.targetPct}%</strong>
+            <span className="text-gray-400"> · {m.coverage.touched30} of {m.coverage.live} live leads</span>
+          </p>
+          <p className="text-[11px] text-gray-400">Touched in the last 7 days: {m.coverage.touched7}</p>
+        </>
+      ) : (
+        <>
       <div className="flex items-baseline gap-2 flex-wrap">
-        <p className="text-3xl font-extrabold text-gray-900 tracking-tight tabular-nums">{m.recentPerWeek}</p>
-        <p className="text-sm text-gray-500">/ week now</p>
-      </div>
-      <p className="text-sm text-gray-500 mt-0.5">
-        Target <strong className="text-gray-700 tabular-nums">{m.targetPerWeek}</strong> / week
-        <span className="text-gray-400"> · 6-mo avg {m.normalPerWeek}</span>
-      </p>
-      {m.targetFrom && (
-        <p className="text-[11px] text-gray-400">Target = our best quarter (13 weeks from {m.targetFrom})</p>
+          <p className="text-3xl font-extrabold text-gray-900 tracking-tight tabular-nums">{m.recentPerWeek}</p>
+          <p className="text-sm text-gray-500">/ week now</p>
+        </div>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Target <strong className="text-gray-700 tabular-nums">{m.targetPerWeek}</strong> / week
+          <span className="text-gray-400"> · 6-mo avg {m.normalPerWeek}</span>
+        </p>
+        {m.targetFrom && (
+          <p className="text-[11px] text-gray-400">Target = our best quarter (13 weeks from {m.targetFrom})</p>
+        )}
+        </>
       )}
       <div className="mt-2"><ChangePill m={m} /></div>
 
@@ -76,7 +92,7 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
               formatter={(v) => [v as number, m.label]}
               labelFormatter={(_, p) => (p?.[0]?.payload as { range?: string } | undefined)?.range ?? ""}
             />
-            {m.targetPerWeek > 0 && (
+            {m.targetPerWeek > 0 && !m.coverage && (
               <ReferenceLine y={m.targetPerWeek} stroke="#334155" strokeDasharray="4 3"
                 label={{ value: "target", position: "insideTopRight", fontSize: 10, fill: "#334155" }} />
             )}

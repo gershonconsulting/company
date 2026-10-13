@@ -21,6 +21,7 @@ export const RECENT_WEEKS     = 4;    // "now" window
 export const BEST_WINDOW      = 13;   // a quarter
 export const SLOWING_PCT      = -25;  // ≤ this vs target → red
 export const SOFTENING_PCT    = -10;  // ≤ this vs target → amber
+export const COVERAGE_TARGET  = 50;   // % of live leads that should be touched every 30 days
 export const DRY_SPELL_DAYS   = 10;   // no new lead for this long → slowing, whatever the averages say
 
 export type MomentumStatus = "slowing" | "softening" | "steady" | "growing" | "no-baseline";
@@ -48,6 +49,7 @@ export interface MomentumMetric {
   status:         MomentumStatus;
   gapPerWeek:     number;   // how many more / week to reach target (0 if on target)
   reliable:       boolean;  // false when the data source is a weak proxy
+  coverage?:      { touched7: number; touched30: number; live: number; pct30: number; targetPct: number };
   daysSinceLast:  number | null;   // days since the most recent event of this kind
 }
 
@@ -167,6 +169,7 @@ export function computeMomentum(boxes: StreakBox[], now = Date.now(), excludeSta
 
   let lastLead = 0, lastTouch = 0, lastMove = 0;
   let withEmail = 0, withTouchpoint = 0, fallback = 0;
+  let live = 0, touched7 = 0, touched30 = 0;
   for (const raw of boxes) {
     const b = raw as AnyBox;
     const c = createdAt(b);
@@ -185,6 +188,11 @@ export function computeMomentum(boxes: StreakBox[], now = Date.now(), excludeSta
 
     const ci = idx(c); if (ci >= 0) weeks[ci].leads++;
     const removed = b.stageKey ? excludeStageKeys.has(b.stageKey) : false;
+    if (!removed) {
+      live++;
+      if (t && now - t <= 7 * DAY)  touched7++;
+      if (t && now - t <= 30 * DAY) touched30++;
+    }
     const ti = idx(t); if (ti >= 0 && !removed) weeks[ti].interactions++;
     const mi = idx(m); if (mi >= 0) weeks[mi].moves++;
   }
@@ -193,7 +201,7 @@ export function computeMomentum(boxes: StreakBox[], now = Date.now(), excludeSta
   const reliableTouch = boxes.length > 0 && (withEmail + withTouchpoint) / boxes.length >= 0.3;
   const out = summarizeMomentum(weeks, {
     leads: daysSince(lastLead), interactions: reliableTouch ? daysSince(lastTouch) : null, moves: daysSince(lastMove),
-  }, now, { interactions: reliableTouch });
+  }, now, { interactions: reliableTouch }, { touched7, touched30, live });
   out.sources = {
     boxes: boxes.length,
     withEmailTimestamps: withEmail,
@@ -210,6 +218,7 @@ export function summarizeMomentum(
   daysSinceLastOf: Record<MomentumKey, number | null>,
   now = Date.now(),
   reliableOf: Partial<Record<MomentumKey, boolean>> = {},
+  cov?: { touched7: number; touched30: number; live: number },
 ): Momentum {
   const shown = allWeeks.slice(-MOMENTUM_WEEKS);
 
@@ -234,7 +243,20 @@ export function summarizeMomentum(
     const days = daysSinceLastOf[key];
     if (key === "leads" && days !== null && days >= DRY_SPELL_DAYS) status = "slowing";
     const reliable = reliableOf[key] ?? true;
+    // Interactions: a "latest touch" history always leans recent, so judge it on
+    // coverage instead — what share of live leads got a real touch in 30 days.
+    let coverage: MomentumMetric["coverage"];
+    let gap = Math.max(0, Math.ceil(target - recentPerWeek));
+    let pct: number | null = changePct;
+    if (key === "interactions" && cov && cov.live > 0) {
+      const pct30 = Math.round((cov.touched30 / cov.live) * 100);
+      coverage = { ...cov, pct30, targetPct: COVERAGE_TARGET };
+      status = pct30 >= COVERAGE_TARGET ? "steady" : pct30 >= COVERAGE_TARGET - 15 ? "softening" : "slowing";
+      gap = Math.max(0, Math.ceil((COVERAGE_TARGET / 100) * cov.live - cov.touched30));
+      pct = null;
+    }
     return {
+      coverage,
       key,
       label:         LABELS[key],
       recentPerWeek: round1(recentPerWeek),
@@ -242,10 +264,10 @@ export function summarizeMomentum(
       targetPerWeek: round1(target),
       targetFrom:    bestIdx >= 0 ? allWeeks[bestIdx].start : null,
       lastWeek:      series[series.length - 1] ?? 0,
-      changePct,
+      changePct: pct,
       changeVsNormalPct,
       status:        reliable ? status : "no-baseline",
-      gapPerWeek:    Math.max(0, Math.ceil(target - recentPerWeek)),
+      gapPerWeek:    gap,
       daysSinceLast: days,
       reliable,
     };
@@ -265,9 +287,10 @@ export function summarizeMomentum(
     const parts = slow.map((m) => {
       const lead = m.key === "leads" && m.daysSinceLast !== null && m.daysSinceLast >= DRY_SPELL_DAYS
         ? ` (none in ${m.daysSinceLast} days)` : "";
+      if (m.coverage) return `only ${m.coverage.pct30}% of leads touched in 30 days`;
       return `${m.label.toLowerCase()} ${m.changePct !== null ? `${m.changePct}%` : ""}${lead}`.trim();
     });
-    headline = `We are slowing down — ${parts.join(", ")} vs our best quarter.`;
+    headline = `We are slowing down — ${parts.join(", ")}.`;
   }
 
   const actions: string[] = [];
@@ -278,7 +301,9 @@ export function summarizeMomentum(
       actions.push(`More leads: add ${n} new lead${n === 1 ? "" : "s"} per week to get back to ${m.targetPerWeek}/week` +
         (m.daysSinceLast !== null && m.daysSinceLast >= 7 ? ` — no new lead in ${m.daysSinceLast} days.` : "."));
     } else if (m.key === "interactions") {
-      actions.push(`More interactions: touch ${n} more lead${n === 1 ? "" : "s"} per week (email, call or meeting) to reach ${m.targetPerWeek}/week.`);
+      actions.push(m.coverage
+        ? `More interactions: touch ${n} more lead${n === 1 ? "" : "s"} in the next 30 days (email, call or meeting) to have ${m.coverage.targetPct}% of the pipeline worked — today ${m.coverage.touched30} of ${m.coverage.live}.`
+        : `More interactions: touch ${n} more lead${n === 1 ? "" : "s"} per week (email, call or meeting) to reach ${m.targetPerWeek}/week.`);
     } else {
       actions.push(`More moves: move ${n} more lead${n === 1 ? "" : "s"} forward a stage per week to reach ${m.targetPerWeek}/week` +
         (m.daysSinceLast !== null && m.daysSinceLast >= 7 ? ` — nothing has moved in ${m.daysSinceLast} days.` : "."));

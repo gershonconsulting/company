@@ -126,7 +126,7 @@ function demoMomentum() {
       leads: leads[i], interactions: touch[i], moves: moves[i],
     };
   });
-  const m = summarizeMomentum(weeks, { leads: 2, interactions: 0, moves: 3 }, now);
+  const m = summarizeMomentum(weeks, { leads: 2, interactions: 0, moves: 3 }, now, {}, { touched7: 30, touched30: 410, live: 1158 });
   m.exact = { trackingSince: new Date(now - 30 * 86400_000).toISOString().slice(0, 10), emailsLast7: 84, emailsPrev7: 131, sentLast7: 52, receivedLast7: 32 };
   return m;
 }

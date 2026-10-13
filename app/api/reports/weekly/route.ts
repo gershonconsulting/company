@@ -294,11 +294,11 @@ function momentumBlock(m: Momentum): string {
   const bg    = m.overall === "slowing" ? "#fef2f2" : m.overall === "softening" ? "#fffbeb" : m.overall === "growing" ? "#ecfdf5" : "#eef2ff";
   const rows = m.metrics.map((x) => {
     const c = x.status === "slowing" ? "#dc2626" : x.status === "softening" ? "#f59e0b" : x.status === "growing" ? "#10b981" : "#64748b";
-    const pct = x.changePct === null ? "n/a" : `${x.changePct > 0 ? "+" : ""}${x.changePct}%`;
+    const pct = x.coverage ? `${x.coverage.pct30}% worked` : x.changePct === null ? "n/a" : `${x.changePct > 0 ? "+" : ""}${x.changePct}%`;
     return `<tr>
       <td style="padding:5px 8px;font-size:13px;color:#374151;">${escapeHtml(x.label)}</td>
-      <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:#111;">${x.recentPerWeek}/wk</td>
-      <td style="padding:5px 8px;font-size:13px;text-align:right;color:#64748b;">target ${x.targetPerWeek}/wk</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:#111;">${x.coverage ? `${x.coverage.touched30}/${x.coverage.live} leads` : `${x.recentPerWeek}/wk`}</td>
+      <td style="padding:5px 8px;font-size:13px;text-align:right;color:#64748b;">target ${x.coverage ? `${x.coverage.targetPct}%` : `${x.targetPerWeek}/wk`}</td>
       <td style="padding:5px 8px;font-size:13px;text-align:right;font-weight:700;color:${c};">${pct}</td>
     </tr>`;
   }).join("");
