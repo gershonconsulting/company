@@ -161,7 +161,8 @@ export function computeActions(
     if (recv > sent && recv > 0 && !isInternal(b.lastEmailFrom)) {
       const d = Math.floor((now - recv) / DAY);
       if (d <= 45) {
-        reasons.push({ kind: "reply", text: `They emailed ${d === 0 ? "today" : `${plural(d, "day")} ago`} — no reply from us yet`, todo: "Reply today" });
+        // Fresher = more urgent: emailed today scores 130, a month ago 100
+        reasons.push({ kind: "reply", text: `They emailed ${d === 0 ? "today" : `${plural(d, "day")} ago`} — no reply from us yet`, todo: "Reply today", weight: 100 + Math.max(0, 30 - d) });
         waiting++;
       }
     }

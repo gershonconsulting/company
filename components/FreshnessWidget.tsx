@@ -82,7 +82,7 @@ export default function FreshnessWidget({ counts }: { counts: FreshnessCounts })
       </div>
       <div style={{ width: "100%", height: 190 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 10, right: 8, left: -20, bottom: 0 }}>
+          <BarChart data={data} margin={{ top: 10, right: 8, left: 0, bottom: 0 }}>
             <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#6b7280" }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} width={36} allowDecimals={false} />
             <Tooltip

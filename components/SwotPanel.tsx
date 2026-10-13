@@ -114,9 +114,9 @@ function SWOT({ total, hotLeads, staleLeadsTotal, funnel, monthlyHighIntake, mon
   if (recentClose < monthlyReachedClosing.slice(-6, -3).reduce((s, d) => s + d.count, 0)) threats.push("Closing-stage velocity has dropped vs prior quarter");
   if (recentHigh < monthlyHighIntake.slice(-6, -3).reduce((s, d) => s + d.count, 0)) threats.push("High-priority intake is slowing");
   if (leadsM && (leadsM.status === "slowing" || leadsM.status === "softening"))
-    threats.push(`New-lead intake is ${leadsM.changePct}% below our best quarter${leadsM.daysSinceLast !== null && leadsM.daysSinceLast >= 7 ? ` — none in ${leadsM.daysSinceLast} days` : ""}`);
+    threats.push(`New-lead intake is ${Math.abs(leadsM.changePct ?? 0)}% below our best quarter${leadsM.daysSinceLast !== null && leadsM.daysSinceLast >= 7 ? ` — none in ${leadsM.daysSinceLast} days` : ""}`);
   if (movesM && (movesM.status === "slowing" || movesM.status === "softening"))
-    threats.push(`Stage moves are ${movesM.changePct}% below our best quarter — deals are stalling`);
+    threats.push(`Stage moves are ${Math.abs(movesM.changePct ?? 0)}% below our best quarter — deals are stalling`);
   if (threats.length === 0) threats.push("None acute right now — maintain discipline");
 
   const Quad = ({ title, items, color }: { title: string; items: string[]; color: "green" | "red" | "blue" | "yellow" }) => {
