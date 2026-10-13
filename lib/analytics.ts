@@ -97,7 +97,7 @@ interface PipelineWithStages extends PipelineSchema {
   stages?: Record<string, { name?: string }> | Array<{ key: string; name: string }>;
 }
 
-function buildStageMap(schema: PipelineSchema): Map<string, string> {
+export function buildStageMap(schema: PipelineSchema): Map<string, string> {
   const map = new Map<string, string>();
   const stages = (schema as PipelineWithStages).stages;
   if (Array.isArray(stages)) {
