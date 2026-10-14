@@ -57,7 +57,7 @@ export interface ActionsPayload {
   leads:       LeadAction[];                         // only leads with at least one reason, best first
   counts:      Record<ActionKind, number>;
   owners:      { email: string; name: string; count: number }[];
-  value:       { clv: number; clvSource: "settings" | "default"; total: number; byStage: StageValue[]; top: LeadAction[] };
+  value:       { clv: number; clvSource: "settings" | "history" | "default"; invoicesPerClient?: number | null; total: number; byStage: StageValue[]; top: LeadAction[] };
   objectives:  ObjectiveMetric[];
   history?:    { date: string; values: Record<string, number> }[];
 }

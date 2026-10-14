@@ -1,4 +1,5 @@
 "use client";
+import { HISTORY_BENCHMARKS } from "@/lib/history-benchmarks";
 
 import { useEffect, useState } from "react";
 import {
@@ -311,8 +312,8 @@ export default function SettingsPage() {
               <p className="text-xs text-gray-400 mb-4">All optional. Fill them in to enable expected pipeline value calculations.</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <KpiInput label="Avg Invoice Value"           k="AVG_INVOICE_VALUE"       suffix="USD"    hint="Dollars per invoice" />
-                <KpiInput label="Avg Invoices / Client"       k="AVG_INVOICES_PER_CLIENT" suffix="count"  hint="Lifetime invoice count" />
-                <KpiInput label="Avg Client Lifetime"         k="AVG_CLIENT_LIFETIME_MO"  suffix="months" hint="Average retention in months" />
+                <KpiInput label="Avg Invoices / Client"       k="AVG_INVOICES_PER_CLIENT" suffix="count"  hint="Lifetime invoice count — empty = one per month over the client lifetime" />
+                <KpiInput label="Avg Client Lifetime"         k="AVG_CLIENT_LIFETIME_MO"  suffix="months" hint={`Average retention in months — empty = track record (${HISTORY_BENCHMARKS.lifetimeMeanMonths} mo since 2021)`} />
                 <div /> {/* spacer */}
                 <KpiInput label="Conversion: High Priority"   k="CONVERSION_RATE_HIGH"    suffix="%" hint="High priority leads that close" />
                 <KpiInput label="Conversion: Medium Priority" k="CONVERSION_RATE_MEDIUM"  suffix="%" hint="Medium priority leads that close" />

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { DollarSign, TrendingUp, Layers, Trophy, ExternalLink } from "lucide-react";
 import { LoadingShim, ErrorShim } from "@/components/analytics-shared";
 import { useActions, fmtUSD, PriorityPill } from "@/components/useActions";
+import TrackRecordPanel from "@/components/TrackRecordPanel";
 
 function Tile({ label, value, sub, color }: { label: string; value: string; sub: string; color: string }) {
   return (
@@ -40,7 +41,7 @@ export default function ValuesPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <Tile label="Weighted pipeline value" value={fmtUSD(v.total)} sub={`${live} live leads`} color="var(--brand)" />
             <Tile label="In closing stages" value={fmtUSD(closingValue)} sub="Proposal · Negotiating · Closing" color="var(--success)" />
-            <Tile label="Client lifetime value" value={fmtUSD(v.clv)} sub={v.clvSource === "settings" ? "avg invoice × invoices per client" : "default — set averages in Settings"} color="var(--info)" />
+            <Tile label="Client lifetime value" value={fmtUSD(v.clv)} sub={v.clvSource === "settings" ? "avg invoice × invoices per client" : v.clvSource === "history" ? `avg invoice × ${v.invoicesPerClient} months (track record)` : "default — set averages in Settings"} color="var(--info)" />
             <Tile label="Avg value per live lead" value={fmtUSD(live ? v.total / live : 0)} sub="weighted" color="var(--violet)" />
           </div>
           <p className="text-xs text-gray-500 -mt-3">
@@ -101,6 +102,8 @@ export default function ValuesPage() {
               </tbody>
             </table>
           </div>
+
+          <TrackRecordPanel avgInvoice={v.clvSource !== "default" && v.invoicesPerClient ? v.clv / v.invoicesPerClient : null} />
 
           <p className="text-xs text-gray-400 flex items-center gap-1.5">
             <TrendingUp size={12} />

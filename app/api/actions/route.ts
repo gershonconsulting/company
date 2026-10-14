@@ -1,3 +1,4 @@
+import { HISTORY_BENCHMARKS } from "@/lib/history-benchmarks";
 import { NextResponse } from "next/server";
 import { getRequestContext } from "@cloudflare/next-on-pages";
 import { getConfig } from "@/lib/config";
@@ -56,12 +57,21 @@ export async function GET() {
     const removed = new Set([...stages].filter(([, n]) => /recycl|lost|reject|archiv|dead/i.test(n)).map(([k]) => k));
     const momentum = computeMomentum(boxes, Date.now(), removed);
     const leadsM = momentum.metrics.find((m) => m.key === "leads");
+    // Client lifetime value = avg invoice × invoices per client. When the
+    // invoice count isn't set, assume monthly billing over the client's
+    // lifetime: the Settings value, else the track record since 2021.
     const inv = Number(config.AVG_INVOICE_VALUE) || 0;
-    const cnt = Number(config.AVG_INVOICES_PER_CLIENT) || 0;
+    const cntSet = Number(config.AVG_INVOICES_PER_CLIENT) || 0;
+    const lifeSet = Number(config.AVG_CLIENT_LIFETIME_MO) || 0;
+    const cnt = cntSet || lifeSet || HISTORY_BENCHMARKS.lifetimeMeanMonths;
     const payload = computeActions(boxes, stages, mapping, inv && cnt ? inv * cnt : null, {
       leadsPerWeek: leadsM?.recentPerWeek ?? 0,
       leadsTarget:  leadsM?.targetPerWeek ?? 0,
     });
+    if (inv) {
+      payload.value.clvSource = cntSet || lifeSet ? "settings" : "history";
+      payload.value.invoicesPerClient = cnt;
+    }
     payload.history = await history(payload);
     return NextResponse.json(payload);
   } catch (err) {
