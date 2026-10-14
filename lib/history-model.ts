@@ -56,7 +56,8 @@ export interface ClientProjection {
   next3RunRate: number                  // if the client stays and keeps this pace
   next3Expected: number                 // weighted by the chance the client stays
   next12Expected: number
-  basis: 'run-rate' | 'ramp' | 'blend'
+  basis: 'run-rate' | 'ramp' | 'blend' | 'inactive' | 'none'
+  lastDataMonth: string | null
   series: MonthPoint[]
 }
 
@@ -88,10 +89,14 @@ export function projectClient(start: string | null, series: MonthPoint[], today:
     const own = last3Avg ?? 0
     return ownW * own + (1 - ownW) * ramp(campaignMonth + k - 1)
   }
-  const basis: ClientProjection['basis'] = full.length >= 3 ? 'run-rate' : full.length === 0 ? 'ramp' : 'blend'
+  const lastDataMonth = withData.length ? withData[withData.length - 1].month : null
+  // No Straight-in report for 3+ months = no running campaign: project nothing.
+  const inactive = lastDataMonth != null && monthsBetween(lastDataMonth, cur) > 3
+  const basis: ClientProjection['basis'] = inactive ? 'inactive' : tenure == null && !withData.length ? 'none'
+    : full.length >= 3 ? 'run-rate' : full.length === 0 ? 'ramp' : 'blend'
   const t = tenure ?? 0
   let next3RunRate = 0, next3Expected = 0, next12Expected = 0
-  for (let k = 1; k <= 12; k++) {
+  for (let k = 1; k <= 12 && basis !== 'inactive' && basis !== 'none'; k++) {
     const p = pace(k), stay = stayProbability(t, k)
     if (k <= 3) { next3RunRate += p; next3Expected += p * stay }
     next12Expected += p * stay
@@ -112,6 +117,7 @@ export function projectClient(start: string | null, series: MonthPoint[], today:
     next3Expected: Math.round(next3Expected),
     next12Expected: Math.round(next12Expected),
     basis,
+    lastDataMonth,
     series,
   }
 }
