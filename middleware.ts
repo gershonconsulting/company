@@ -4,7 +4,7 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth";
 
 // Every page and API route requires a valid session, except:
 //   /login, /api/auth/* (login, logout, setup, and the account endpoints
-//   that check the session themselves), /api/reports/weekly (own key),
+//   that check the session themselves), /api/reports/weekly and /api/reports/sales-weekly (own key),
 //   and static assets.
 // Pages redirect to /login; APIs get 401 JSON.
 
@@ -29,6 +29,6 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!login|api/auth|api/reports/weekly|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|zip)$).*)",
+    "/((?!login|api/auth|api/reports/weekly|api/reports/sales-weekly|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|zip)$).*)",
   ],
 };

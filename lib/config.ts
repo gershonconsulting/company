@@ -19,7 +19,9 @@ export type ConfigKey =
   | "RESEND_API_KEY"
   | "REPORT_FROM"
   | "REPORT_TO"
-  | "REPORT_TRIGGER_KEY";
+  | "REPORT_TRIGGER_KEY"
+  // Monday sales report (three jobs of sales)
+  | "SALES_REPORT_TO";
 
 const ALL_KEYS: ConfigKey[] = [
   "STREAK_API_KEY",
@@ -34,6 +36,7 @@ const ALL_KEYS: ConfigKey[] = [
   "REPORT_FROM",
   "REPORT_TO",
   "REPORT_TRIGGER_KEY",
+  "SALES_REPORT_TO",
 ];
 
 interface KVNamespace {

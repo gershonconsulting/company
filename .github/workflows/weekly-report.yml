@@ -1,4 +1,4 @@
-name: Weekly pipeline report
+name: Weekly pipeline + sales reports
 
 # Sends the weekly Company pipeline report (recipient set in Settings —
 # report@gershonconsulting.com) every Monday 08:00 New York time.
@@ -19,4 +19,12 @@ jobs:
           if [ -z "$KEY" ]; then echo "REPORT_TRIGGER_KEY secret is not set on this repo." >&2; exit 1; fi
           RESP=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -H "X-Report-Key: $KEY" "https://company.gershoncrm.com/api/reports/weekly")
           echo "HTTP $RESP"; cat /tmp/resp.json
+          [ "$RESP" = "200" ]
+      - name: Trigger Monday sales report (sales@gershonconsulting.com)
+        if: always()
+        env:
+          KEY: ${{ secrets.REPORT_TRIGGER_KEY }}
+        run: |
+          RESP=$(curl -sS -o /tmp/sales.json -w "%{http_code}" -H "X-Report-Key: $KEY" "https://company.gershoncrm.com/api/reports/sales-weekly")
+          echo "HTTP $RESP"; cat /tmp/sales.json
           [ "$RESP" = "200" ]
