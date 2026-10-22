@@ -64,7 +64,7 @@ function KpiTile({
   icon: React.ReactNode;
 }) {
   const accentBorder = {
-    brand:   "border-[color:var(--brand)]",
+    brand:   "border-[color:var(--series)]",
     success: "border-[color:var(--success)]",
     warning: "border-[color:var(--warning)]",
     danger:  "border-[color:var(--danger)]",
@@ -121,9 +121,9 @@ export default function Dashboard() {
   const funnel = an.data?.funnel ?? [];
 
   return (
-    <main className="min-h-screen p-6 md:p-10">
+    <main className="gx-page min-h-screen p-6 md:p-10">
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between flex-wrap gap-4">
+      <div className="gx-page-head mb-6 flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <Database size={24} className="text-[color:var(--brand)]" />
           <div>
@@ -152,7 +152,7 @@ export default function Dashboard() {
           <TodayStrip />
           {an.data?.momentum && <MomentumPanel momentum={an.data.momentum} />}
 
-          {/* ── Tier 1: Hero KPIs ─────────────────────────────────────── */}
+          {/* ── Tier 1: Hero KPIs ───────────────────────────────────── */}
           <section>
             <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">At a glance</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -193,7 +193,7 @@ export default function Dashboard() {
             </p>
           </section>
 
-          {/* ── Tier 2: Where the pipeline is ────────────────────────── */}
+          {/* ── Tier 2: Where the pipeline is ──────────────────────────── */}
           <section>
             <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">Where your pipeline is</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -214,7 +214,7 @@ export default function Dashboard() {
                           {f.stageName}
                         </div>
                         <div className="flex-1 h-6 bg-gray-100 rounded-md overflow-hidden relative">
-                          <div className={`h-full ${f.isClosing ? "bg-emerald-500" : "bg-[color:var(--brand)]"}`}
+                          <div className={`h-full ${f.isClosing ? "bg-emerald-500" : "bg-[color:var(--series)]"}`}
                                style={{ width: `${(f.count / max) * 100}%` }} />
                           <div className="absolute inset-0 flex items-center justify-end pr-2">
                             <span className="text-xs font-bold text-gray-700 tabular-nums">{f.count}</span>
@@ -251,7 +251,7 @@ export default function Dashboard() {
                   <strong className="text-gray-700">Read:</strong>{" "}
                   High = <strong className="text-red-700">{bd.data?.high}</strong>,
                   Medium = <strong className="text-amber-700">{bd.data?.medium}</strong>,
-                  Low = <strong className="text-[color:var(--brand)]">{bd.data?.low}</strong>.
+                  Low = <strong className="text-indigo-600">{bd.data?.low}</strong>.
                   {bd.data && total > 0 && (bd.data.high / total) < 0.1 && " High Priority is thin — focus qualification."}
                 </p>
               </div>
@@ -271,7 +271,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* ── Tier 3: How we're trending ──────────────────────────── */}
+          {/* ── Tier 3: How we're trending ────────────────────────── */}
           <section>
             <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">How you're trending</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -281,7 +281,7 @@ export default function Dashboard() {
                   New leads — by month
                 </h3>
                 <p className="text-xs text-gray-400 mb-3">How many leads enter the pipeline each month (all priorities). Click a bar for the leads behind it.</p>
-                <InteractiveMonthlyBar data={an.data!.monthlyAllIntake} color="#6366f1" metric="intake" height={200} />
+                <InteractiveMonthlyBar data={an.data!.monthlyAllIntake} color="#475569" metric="intake" height={200} />
               </div>
               <div className="bg-white rounded-xl shadow p-5">
                 <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
@@ -302,7 +302,7 @@ export default function Dashboard() {
             </p>
           </section>
 
-          {/* ── Tier 4: Needs attention ─────────────────────────────── */}
+          {/* ── Tier 4: Needs attention ───────────────────────────── */}
           <section>
             <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">What needs attention</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -369,7 +369,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* ── Tier 5: Quick links ─────────────────────────────────── */}
+          {/* ── Tier 5: Quick links ───────────────────────────────── */}
           <section>
             <h2 className="text-[11px] font-bold tracking-[0.18em] text-gray-500 uppercase mb-3">Go deeper</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
