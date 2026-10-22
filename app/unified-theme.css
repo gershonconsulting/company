@@ -1,0 +1,130 @@
+/* =====================================================================
+   Company - unified Gershon design (v1.1.0, 2026-10-22)
+   Decision 2026-10-13: every Gershon app looks like Linalysis (the master
+   design) and the main colour everywhere is the Gershon.ai red #CC3333.
+   Same approach as Radar (PR #4) and Pulse: one override layer, imported
+   LAST in app/layout.tsx, plus a few gx-* hook classes in the markup.
+
+   - Brand tokens (--brand / --brand-ink / --brand-soft) switch from the
+     old indigo to Gershon red, so every existing `var(--brand)` button,
+     tab, link, focus ring and icon turns red with no per-page edits.
+   - Functional colours are KEPT: priority High/Medium/Low (red/amber/
+     indigo), freshness Hot/Warm/Cold, closing-stage green, momentum
+     status, success/warning/danger/info.
+   - Neutral data ("total" bars, funnel stages, trend lines) use the new
+     --series slate token instead of the brand colour, so a plain count
+     never reads as an alert.
+
+   Note: this file is NOT inside a Tailwind @layer, so its rules beat any
+   Tailwind utility. Keep every rule scoped to a gx-* hook class.
+   ===================================================================== */
+
+/* ---------- Tokens (html:root beats globals.css :root) ---------- */
+html:root{
+  --gx-red:#CC3333; --gx-red-dark:#a8281f; --gx-red-light:#fdf2f2; --gx-red-line:#f3caca;
+  --gx-text:#1d1d1f; --gx-muted:#6e6e73; --gx-border:#e5e7eb; --gx-bg:#fafafa; --gx-radius:12px;
+  --gx-ring:0 0 0 3px rgba(204,51,51,.15);
+
+  --brand:var(--gx-red); --brand-ink:var(--gx-red-dark); --brand-soft:var(--gx-red-light);
+  --brand-dark:var(--gx-red-dark); --brand-light:var(--gx-red-light);
+  --series:#475569;                       /* neutral data colour */
+
+  --background:#ffffff; --foreground:var(--gx-text);
+  --bg:var(--gx-bg); --card:#ffffff; --text:var(--gx-text); --text-muted:var(--gx-muted);
+  --border:var(--gx-border); --side-line:var(--gx-border);
+  --sidebar-w:240px;
+}
+html body.gx-body{
+  background:var(--gx-bg); color:var(--gx-text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+
+/* ---------- Sidebar: white, 240px, 1px border-right, red active pill ---------- */
+.gx-sidebar{ width:var(--sidebar-w); border-right:1px solid var(--gx-border); }
+.gx-sidebar .gx-brand h1{ letter-spacing:-0.02em; }
+.gx-sidebar .gx-nav-sec{ font-size:11px; letter-spacing:0.06em; color:var(--gx-muted); }
+.gx-sidebar .gx-nav-item.gx-active:hover,
+.gx-sidebar .gx-foot-btn.gx-active:hover{ background:var(--gx-red-dark); color:#fff; }
+.gx-sidebar .gx-nav-item:focus-visible,
+.gx-sidebar .gx-foot-btn:focus-visible{ outline:none; box-shadow:var(--gx-ring); }
+
+/* ---------- White page header bar (full width of the content area) ---------- */
+.gx-page > .gx-page-head{
+  background:#fff; border-bottom:1px solid var(--gx-border);
+  margin:-24px -24px 24px; padding:20px 24px;
+}
+.gx-page > .gx-page-head h1{ color:var(--gx-text); letter-spacing:-0.02em; }
+@media (min-width:768px){
+  .gx-page > .gx-page-head{ margin:-40px -40px 28px; padding:24px 40px; }
+}
+
+/* ---------- Cards: white, 12px, hairline #e5e7eb, flat ---------- */
+/* ring via box-shadow so the cards' coloured top/left accent borders survive */
+.gx-page .bg-white.rounded-xl{ box-shadow:0 0 0 1px var(--gx-border), 0 1px 2px rgba(16,24,40,.04); }
+.gx-page .bg-white.rounded-xl.shadow:hover,
+.gx-page .bg-white.rounded-xl.hover\:shadow-md:hover{ box-shadow:0 0 0 1px var(--gx-red-line), 0 4px 14px rgba(204,51,51,.08); }
+.gx-page .gx-page-head .rounded-full.bg-white:hover{ background:#fff; }
+
+/* ---------- Inputs: red focus ring everywhere ---------- */
+.gx-body input:focus, .gx-body select:focus, .gx-body textarea:focus{
+  outline:none; border-color:var(--gx-red); box-shadow:var(--gx-ring);
+}
+.gx-body input[type="checkbox"], .gx-body input[type="radio"]{ accent-color:var(--gx-red); }
+.gx-body button:focus-visible, .gx-body a:focus-visible{ outline:2px solid var(--gx-red); outline-offset:2px; }
+
+/* ---------- Floating DEMO badge: bottom-right, so it never covers the
+   page title or the header's Refresh button ---------- */
+.gx-demo-badge{ top:auto; bottom:12px; right:12px; }
+
+/* ---------- Sign-in: light, red button, red closing band ---------- */
+.gx-login{ background:linear-gradient(160deg,#ffffff 0%,var(--gx-bg) 55%,var(--gx-red-light) 100%); }
+.gx-login .gx-login-card{ border-color:var(--gx-border); box-shadow:0 18px 50px rgba(29,29,31,.08); }
+.gx-login .gx-login-card h1{ color:var(--gx-text); }
+.gx-login-band{ background:linear-gradient(135deg,var(--gx-red) 0%,var(--gx-red-dark) 100%); }
+
+/* ---------- Phone / tablet: sidebar becomes a top bar (no horizontal page scroll) ---------- */
+@media (max-width:880px){
+  html body.gx-body{ flex-direction:column; }
+  .gx-body > .gx-main{ width:100%; }
+
+  .gx-sidebar{
+    --sidebar-w:100%;                     /* the inline width reads this token */
+    position:static; height:auto; width:100%;
+    border-right:none; border-bottom:1px solid var(--gx-border);
+  }
+  .gx-sidebar .gx-brand{ padding:14px 16px 2px; }
+  .gx-sidebar .gx-brand-meta{
+    display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+    padding:2px 16px 10px; margin:0; border-bottom:none;
+  }
+  .gx-sidebar .gx-brand-meta > div{ margin:0; }
+  .gx-sidebar .gx-brand-meta > div:last-child{ display:none; }   /* release date */
+
+  /* nav: one horizontally scrollable row of pills (scrolls inside itself) */
+  .gx-sidebar .gx-nav{
+    flex:none; flex-direction:row; gap:4px; overflow-x:auto; overflow-y:hidden;
+    padding:0 12px 10px; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  .gx-sidebar .gx-nav::-webkit-scrollbar{ display:none; }
+  .gx-sidebar .gx-nav-group{ display:contents; }
+  .gx-sidebar .gx-nav-sec{ display:none; }
+  .gx-sidebar .gx-nav-item{
+    width:auto; flex:none; white-space:nowrap;
+    padding:7px 12px; font-size:0.85rem; gap:6px; border-radius:999px;
+    border:1px solid var(--gx-border);
+  }
+  .gx-sidebar .gx-nav-item.gx-active{ border-color:var(--gx-red); }
+
+  /* footer: Settings / Demo / Log out as a compact row; domain hidden */
+  .gx-sidebar .gx-foot{ flex-direction:row; flex-wrap:wrap; gap:6px; padding:8px 12px 10px; }
+  .gx-sidebar .gx-foot-btn{ padding:6px 10px; font-size:0.8rem; gap:6px; }
+  .gx-sidebar .gx-domain{ display:none; }
+
+  .gx-demo-badge{ left:12px; justify-content:center; }
+}
+
+/* Wide tables / charts never push the page sideways on a phone */
+@media (max-width:640px){
+  .gx-page{ overflow-x:hidden; }
+  .gx-page > .gx-page-head{ padding:16px 24px; margin:-24px -24px 20px; }
+}
