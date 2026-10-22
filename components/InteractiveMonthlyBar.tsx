@@ -90,7 +90,7 @@ export default function InteractiveMonthlyBar({
               key={r.n}
               onClick={() => { setRangeN(r.n); setSelectedMonth(null); }}
               className={`px-3 py-1 rounded-full text-xs font-bold transition-colors ${
-                rangeN === r.n ? "bg-white text-[color:var(--brand)] shadow-sm" : "text-gray-500 hover:text-gray-700"
+                rangeN === r.n ? "bg-[color:var(--brand)] text-white shadow-sm" : "text-gray-500 hover:text-gray-700"
               }`}
             >
               {r.label}
@@ -125,7 +125,7 @@ export default function InteractiveMonthlyBar({
               contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", boxShadow: "0 4px 12px rgba(0,0,0,0.08)", fontSize: 12 }}
               labelStyle={{ fontWeight: 700, color: "#111" }}
               formatter={(v: number) => [v, "leads"]}
-              cursor={{ fill: "rgba(254,27,4,0.06)" }}
+              cursor={{ fill: "rgba(204,51,51,0.06)" }}
             />
             <Bar
               dataKey="count"
@@ -136,7 +136,7 @@ export default function InteractiveMonthlyBar({
               {sliced.map((d) => (
                 <Cell
                   key={d.month}
-                  fill={selectedMonth === d.month ? "#FE1B04" : color}
+                  fill={selectedMonth === d.month ? "#CC3333" : color}
                   fillOpacity={selectedMonth === null || selectedMonth === d.month ? 1 : 0.4}
                 />
               ))}

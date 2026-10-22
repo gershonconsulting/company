@@ -59,7 +59,7 @@ export default function TrackRecordPanel({ avgInvoice }: { avgInvoice: number | 
                 <Tooltip contentStyle={{ borderRadius: 10, fontSize: 11 }} formatter={(v) => [`${v}%`, "still with us"]} labelFormatter={(m) => `Month ${m}`} />
                 <ReferenceLine x={6} stroke="#cbd5e1" strokeDasharray="3 3" />
                 <ReferenceLine x={12} stroke="#cbd5e1" strokeDasharray="3 3" />
-                <Line type="linear" dataKey="pct" stroke="var(--brand)" strokeWidth={2} dot={false} />
+                <Line type="linear" dataKey="pct" stroke="var(--series)" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -73,7 +73,7 @@ export default function TrackRecordPanel({ avgInvoice }: { avgInvoice: number | 
                 <XAxis dataKey="y" tick={{ fontSize: 10 }} />
                 <YAxis tick={{ fontSize: 10 }} allowDecimals={false} />
                 <Tooltip contentStyle={{ borderRadius: 10, fontSize: 11 }} formatter={(v) => [v, "new clients"]} />
-                <Bar dataKey="n" fill="var(--brand)" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="n" fill="var(--series)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

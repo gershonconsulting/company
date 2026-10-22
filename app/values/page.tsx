@@ -24,8 +24,8 @@ export default function ValuesPage() {
   const live = v ? v.byStage.reduce((a, s) => a + s.count, 0) : 0;
 
   return (
-    <main className="min-h-screen p-6 md:p-10">
-      <div className="mb-6 flex items-center gap-3">
+    <main className="gx-page min-h-screen p-6 md:p-10">
+      <div className="gx-page-head mb-6 flex items-center gap-3">
         <DollarSign size={24} className="text-[color:var(--brand)]" />
         <div>
           <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Pipeline Value</h1>
@@ -39,7 +39,7 @@ export default function ValuesPage() {
       {v && !loading && (
         <div className="flex flex-col gap-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Tile label="Weighted pipeline value" value={fmtUSD(v.total)} sub={`${live} live leads`} color="var(--brand)" />
+            <Tile label="Weighted pipeline value" value={fmtUSD(v.total)} sub={`${live} live leads`} color="var(--series)" />
             <Tile label="In closing stages" value={fmtUSD(closingValue)} sub="Proposal · Negotiating · Closing" color="var(--success)" />
             <Tile label="Client lifetime value" value={fmtUSD(v.clv)} sub={v.clvSource === "settings" ? "avg invoice × invoices per client" : v.clvSource === "history" ? `avg invoice × ${v.invoicesPerClient} months (track record)` : "default — set averages in Settings"} color="var(--info)" />
             <Tile label="Avg value per live lead" value={fmtUSD(live ? v.total / live : 0)} sub="weighted" color="var(--violet)" />
@@ -65,7 +65,7 @@ export default function ValuesPage() {
                     <td className="py-2 pr-3 text-right tabular-nums text-gray-500">{Math.round(s.prob * 100)}%</td>
                     <td className="py-2 pr-3">
                       <div className="h-4 bg-gray-100 rounded overflow-hidden">
-                        <div className={`h-full ${/proposal|negotiat|clos/i.test(s.stageName) ? "bg-emerald-500" : "bg-[color:var(--brand)]"}`} style={{ width: `${(s.value / maxStage) * 100}%` }} />
+                        <div className={`h-full ${/proposal|negotiat|clos/i.test(s.stageName) ? "bg-emerald-500" : "bg-[color:var(--series)]"}`} style={{ width: `${(s.value / maxStage) * 100}%` }} />
                       </div>
                     </td>
                     <td className="py-2 text-right tabular-nums font-bold">{fmtUSD(s.value)}</td>

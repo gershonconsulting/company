@@ -65,7 +65,8 @@ export default function LoginClient() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-4 bg-[color:var(--bg)]">
+    <div className="gx-login min-h-screen w-full flex flex-col">
+      <div className="flex-1 w-full flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         {/* Brand block — mirrors the sidebar lockup */}
         <div className="text-center mb-8">
@@ -86,7 +87,7 @@ export default function LoginClient() {
         </div>
 
         <div
-          className="bg-white rounded-2xl shadow-sm border p-8"
+          className="gx-login-card bg-white rounded-xl border p-6 sm:p-8"
           style={{ borderColor: "var(--side-line)" }}
         >
           <h1 className="text-lg font-extrabold tracking-tight text-slate-800 mb-6">
@@ -160,15 +161,18 @@ export default function LoginClient() {
           </form>
         </div>
 
-        <div className="text-center mt-6 space-y-1">
-          <p className="text-xs text-slate-400">
-            Gershon Consulting — Internal Use Only
-          </p>
-          <p className="text-[0.7rem] text-slate-300">
-            company.gershonCRM.com · v{APP_VERSION}
-          </p>
-        </div>
       </div>
+      </div>
+
+      {/* Closing band — solid Gershon red, like the Linalysis CTA band */}
+      <footer className="gx-login-band text-center px-4 py-6 space-y-1">
+        <p className="text-sm font-semibold text-white">
+          Gershon Consulting — Internal Use Only
+        </p>
+        <p className="text-[0.72rem] text-white/80">
+          company.gershonCRM.com · v{APP_VERSION}
+        </p>
+      </footer>
     </div>
   );
 }

@@ -62,8 +62,8 @@ export default function ReportsPage() {
   ];
 
   return (
-    <main className="min-h-screen p-6 md:p-10">
-      <div className="mb-6 flex items-start justify-between flex-wrap gap-4">
+    <main className="gx-page min-h-screen p-6 md:p-10">
+      <div className="gx-page-head mb-6 flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <FileBarChart size={24} className="text-[color:var(--brand)]" />
           <div>
@@ -111,7 +111,7 @@ export default function ReportsPage() {
               <div className="bg-white rounded-xl shadow p-5 border-l-4 border-[color:var(--brand)]">
                 <h3 className="text-sm font-bold text-gray-700 mb-3">What happened in {monthLabel}</h3>
                 <p className="text-base text-gray-800 leading-relaxed">
-                  We added <strong className="text-[color:var(--brand)]">{newTotal.now}</strong> new leads to the pipeline
+                  We added <strong className="text-gray-900">{newTotal.now}</strong> new leads to the pipeline
                   {newTotal.delta !== 0 && (
                     <> (<span className={newTotal.delta > 0 ? "text-emerald-700" : "text-red-700"}>{newTotal.delta > 0 ? "+" : ""}{newTotal.delta}</span> vs last month)</>
                   )}
@@ -160,7 +160,7 @@ export default function ReportsPage() {
                 <div className="bg-white rounded-xl shadow p-5">
                   <h3 className="text-sm font-bold text-gray-700 mb-1">New leads / month</h3>
                   <p className="text-xs text-gray-400 mb-3">Last 12 months · all priorities · {sumLastN(data.monthlyAllIntake, 12)} total</p>
-                  <MonthlyBar series={data.monthlyAllIntake} color="#FE1B04" />
+                  <MonthlyBar series={data.monthlyAllIntake} color="#475569" />
                 </div>
                 <div className="bg-white rounded-xl shadow p-5">
                   <h3 className="text-sm font-bold text-gray-700 mb-1">Removed leads / month</h3>
@@ -194,7 +194,7 @@ export default function ReportsPage() {
                         <tr key={row.month} className="hover:bg-gray-50">
                           <td className="py-2 text-gray-800 font-medium">{fmtMonth(row.month)}</td>
                           <td className="py-2 text-right tabular-nums">{newAll}</td>
-                          <td className="py-2 text-right tabular-nums text-[color:var(--brand)] font-semibold">{newHi}</td>
+                          <td className="py-2 text-right tabular-nums text-gray-900 font-semibold">{newHi}</td>
                           <td className="py-2 text-right tabular-nums text-emerald-700 font-semibold">{reached}</td>
                           <td className="py-2 text-right tabular-nums text-amber-700 font-semibold">{rem}</td>
                           <td className={`py-2 text-right tabular-nums font-bold ${net >= 0 ? "text-emerald-700" : "text-red-700"}`}>{net >= 0 ? "+" : ""}{net}</td>
@@ -217,7 +217,7 @@ export default function ReportsPage() {
               <div className="bg-white rounded-xl shadow p-5 border-l-4 border-[color:var(--brand)]">
                 <h3 className="text-sm font-bold text-gray-700 mb-3">Sales movement (last 3 months)</h3>
                 <p className="text-base text-gray-800 leading-relaxed">
-                  In the last 3 months we generated <strong className="text-[color:var(--brand)]">{newHi3}</strong> new High Priority leads
+                  In the last 3 months we generated <strong className="text-gray-900">{newHi3}</strong> new High Priority leads
                   and pushed <strong className="text-emerald-700">{reach3}</strong> leads into closing stages
                   ({reach6 > 0 ? `${Math.round((reach3 / reach6) * 100)}%` : "—"} of the trailing-6-month total).
                   Hot list shows <strong>{data.hotLeads.length}</strong> high-priority leads with recent activity worth pushing this week.
@@ -276,8 +276,8 @@ export default function ReportsPage() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <KpiTile label="Removed (3mo)"  value={removed3}              accent="yellow" icon={<Trash2 size={16} className="text-amber-500" />} />
-              <KpiTile label="Stale Leads"    value={data.staleLeadsTotal} accent={data.staleLeadsTotal > 0 ? "brand" : "green"} icon={<TrendingDown size={16} className="text-[color:var(--brand)]" />} />
-              <KpiTile label="Stale Share"    value={`${stalePct.toFixed(0)}%`} accent={stalePct > 25 ? "brand" : "green"} icon={<TrendingDown size={16} className="text-gray-500" />} />
+              <KpiTile label="Stale Leads"    value={data.staleLeadsTotal} accent={data.staleLeadsTotal > 0 ? "red" : "green"} icon={<TrendingDown size={16} className="text-red-500" />} />
+              <KpiTile label="Stale Share"    value={`${stalePct.toFixed(0)}%`} accent={stalePct > 25 ? "red" : "green"} icon={<TrendingDown size={16} className="text-gray-500" />} />
             </div>
 
             <div className="bg-white rounded-xl shadow p-5">

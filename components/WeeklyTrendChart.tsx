@@ -69,17 +69,17 @@ export default function WeeklyTrendChart() {
           <AreaChart data={chartData} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="nddGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%"  stopColor="#6366f1" stopOpacity={0.25} />
-                <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                <stop offset="5%"  stopColor="#475569" stopOpacity={0.25} />
+                <stop offset="95%" stopColor="#475569" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="week" tick={{ fontSize: 12 }} />
             <YAxis unit="%" domain={[0, 80]} tick={{ fontSize: 12 }} />
             <Tooltip formatter={fmt} />
-            <ReferenceLine y={OBJECTIVES.nextDueDateTarget} stroke="#6366f1" strokeDasharray="5 3"
-              label={{ value: `Target ${OBJECTIVES.nextDueDateTarget}%`, position: "insideTopRight", fontSize: 10, fill: "#6366f1" }} />
-            <Area type="monotone" dataKey="Next Due Date" stroke="#6366f1" strokeWidth={2.5}
+            <ReferenceLine y={OBJECTIVES.nextDueDateTarget} stroke="#475569" strokeDasharray="5 3"
+              label={{ value: `Target ${OBJECTIVES.nextDueDateTarget}%`, position: "insideTopRight", fontSize: 10, fill: "#475569" }} />
+            <Area type="monotone" dataKey="Next Due Date" stroke="#475569" strokeWidth={2.5}
               fill="url(#nddGrad)" dot={{ r: 4 }} activeDot={{ r: 6 }} />
           </AreaChart>
         </ResponsiveContainer>

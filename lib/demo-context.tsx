@@ -38,7 +38,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     <Ctx.Provider value={{ demoMode, toggle, setOff }}>
       {children}
       {demoMode && (
-        <div className="fixed top-3 right-3 z-50 bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
+        <div className="gx-demo-badge fixed top-3 right-3 z-50 bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5">
           <span className="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
           DEMO MODE — showing simulated data
         </div>
