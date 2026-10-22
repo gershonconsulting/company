@@ -106,7 +106,7 @@ export function KpiTile({
   icon?: React.ReactNode;
 }) {
   const accentBorder = {
-    brand:  "border-[color:var(--brand)]",
+    brand:  "border-[color:var(--series)]",
     blue:   "border-blue-500",
     yellow: "border-yellow-500",
     purple: "border-purple-500",
