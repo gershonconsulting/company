@@ -143,7 +143,7 @@ export default function FreshnessWidget({ counts }: { counts: FreshnessCounts })
                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
                           l.priority === "High"   ? "bg-red-100 text-red-700" :
                           l.priority === "Medium" ? "bg-amber-100 text-amber-700" :
-                          l.priority === "Low"    ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]" :
+                          l.priority === "Low"    ? "bg-indigo-50 text-indigo-700" :
                                                     "bg-gray-100 text-gray-500"
                         }`}>{l.priority}</span>
                       </td>
