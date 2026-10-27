@@ -36,7 +36,7 @@ async function run(req: NextRequest) {
     const apiKey      = config.STREAK_API_KEY;
     const pipelineKey = resolvePipelineKey(config.STREAK_PIPELINE_KEY ?? "");
     const resendKey   = config.RESEND_API_KEY;
-    const from        = config.REPORT_FROM || "reports@gershonconsulting.com";
+    const from        = `GC Pipeline Report <${extractAddress(config.REPORT_FROM) || "reports@gershonconsulting.com"}>`;
     const to          = config.REPORT_TO   || "sales@gershonconsulting.com";
 
     if (!apiKey || !pipelineKey) {
@@ -313,4 +313,10 @@ function momentumBlock(m: Momentum): string {
       ${actions}
     </div>
   </td></tr>`;
+}
+
+function extractAddress(s: string | undefined): string {
+  if (!s) return "";
+  const m = s.match(/<([^>]+)>/);
+  return (m ? m[1] : s).trim();
 }
