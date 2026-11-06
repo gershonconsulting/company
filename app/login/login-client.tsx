@@ -124,7 +124,7 @@ export default function LoginClient() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="admin@gershonconsulting"
+                placeholder="name@gershonconsulting.com"
                 className="w-full px-3.5 py-2.5 rounded-[11px] text-sm text-slate-800 border border-[color:var(--border)] outline-none transition-shadow focus:ring-2 focus:ring-[color:var(--brand)] focus:border-[color:var(--brand)]"
               />
             </div>
