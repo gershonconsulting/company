@@ -1,0 +1,110 @@
+================================================================
+HANDOFF.txt  -  company
+Written by: Claude (nightly run) - token-limit handoff protocol
+Date: 2026-10-27
+Reason: repo had no HANDOFF.txt. Another AI can continue this work
+        from this file alone.
+================================================================
+
+0. WHO YOU ARE READING THIS
+----------------------------------------------------------------
+You are an AI assistant (ChatGPT, Gemini, Copilot, or another Claude
+session) taking over work on this repository for Olivier Attia,
+founder / CTO of Gershon Consulting LLC.
+
+Read the MASTER HANDOFF first:
+  github.com/gershonconsulting/memory -> HANDOFF.txt
+It carries the full operating rules, the technical defaults, and the
+index of all repos.
+
+CRITICAL OPERATING RULES - do not break these:
+  * Olivier does NOT use a terminal, CLI, git or PowerShell. NEVER
+    give him commands, scripts, .bat files or 'just run this' steps.
+  * He does NOT upload, download, move or save files. If a file has
+    to get somewhere, YOU find the route and execute it.
+  * End every actionable reply with:
+      GREEN CHECK = ready for him to test (+ the link)
+      RED CROSS   = something still to do (+ exactly 3 options he can
+                    actually action - never a CLI step)
+  * Executors: Ariel = code and repo work. Charles = Chrome extension
+    and web admin panels (Cloudflare, GitHub settings, DNS, publishing).
+
+1. WHAT THIS REPO IS
+----------------------------------------------------------------
+Product / site name : Company by Gershon.AI (Streak-based CRM administration)
+Live URL            : https://company.gershoncrm.com
+What it does        : Reads the "GC Pipeline" from Streak and shows pipeline
+                      analytics (pages: today, analysis, objectives, swot,
+                      values, warnings, reports, settings). Sends two weekly
+                      emails every Monday: the Weekly Pipeline Report and
+                      the Sales Weekly report (via Resend).
+                      Streak/Resend keys and report addresses are stored in
+                      the SETTINGS KV namespace, edited on /settings.
+Who uses it         : Olivier and the Gershon team (internal).
+
+2. STACK AND DEPLOY ROUTE
+----------------------------------------------------------------
+Language / framework: Next.js (App Router, edge runtime), TypeScript,
+                      @cloudflare/next-on-pages
+Hosting             : Cloudflare Pages (NOT the Hostinger default) - project
+                      gershon-company (production, bound to
+                      company.gershoncrm.com) plus a mirror project
+                      gershoncrm-company kept in sync.
+DNS / registrar     : Tierra.net; Cloudflare for CDN/DNS/SSL
+Deploy method       : GitHub Actions (.github/workflows/deploy.yml) on push
+                      to main: bumps the patch version and commits it back
+                      with [skip ci], runs next-on-pages, deploys to both
+                      Pages projects with wrangler.
+Default branch      : main
+How to ship a change: merge a PR to main. The CI version-bump commit lands on
+                      main afterwards, so rebase open branches before merging.
+Secrets / env vars  : GitHub: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID,
+                      REPORT_TRIGGER_KEY. KV SETTINGS (edited on /settings):
+                      STREAK_API_KEY, STREAK_PIPELINE_KEY, RESEND_API_KEY,
+                      REPORT_FROM, REPORT_TO, REPORT_TRIGGER_KEY.
+                      Values live in 1Password.
+
+3. RECENTLY DONE  [DONE]
+----------------------------------------------------------------
+- Version 1.0.50 auto-bumped 2026-10-15 (CI).
+- Weekly pipeline + sales reports on a Monday 08:00 New York cron
+  (.github/workflows/weekly-report.yml).
+- Sales Weekly report already sends as "GC Sales Weekly".
+
+4. PENDING  [TODO]
+----------------------------------------------------------------
+- Merge PR #3 (nightly 2026-10-27): weekly pipeline report sender
+  "GC Pipeline Report" (it was a bare address with no display name).
+- Confirm REPORT_FROM in /settings is a verified Resend sender.
+
+5. MISSING / NOT BUILT YET
+----------------------------------------------------------------
+- README.md is still the create-next-app boilerplate; this file is the real
+  documentation. AGENTS.md / CLAUDE.md, GERSHON_DESIGN_SYSTEM.md and
+  GERSHON_SIDEBAR_STANDARD.md hold the UI rules.
+
+6. KNOWN BUGS / NEEDS FIXING
+----------------------------------------------------------------
+- None logged in the repo. The deploy pushes to two Pages projects; if one
+  fails the other may still be updated.
+
+7. NEXT ACTION - START HERE
+----------------------------------------------------------------
+The single most valuable next step is:
+  -> Merge the GC sender PR, then confirm Monday's report arrives from
+     "GC Pipeline Report" at report@gershonconsulting.com.
+
+8. GOTCHAS / HARD-WON LESSONS
+----------------------------------------------------------------
+- Every merge to main triggers a CI commit (version bump).
+- All config is in KV, not env files; requests never carry credentials.
+- Read GERSHON_DESIGN_SYSTEM.md before touching UI (Gershon red #CC3333).
+
+9. CONTACT / ESCALATION
+----------------------------------------------------------------
+Olivier Attia - oattia@gmail.com
+Report mailbox - report@gershonconsulting.com
+
+================================================================
+END OF HANDOFF
+================================================================
