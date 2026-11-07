@@ -1,0 +1,67 @@
+================================================================
+HANDOFF.txt  -  company  (Company by Gershon.AI)
+Written by: Claude (Anthropic) - nightly handoff
+Created: 2026-10-22 (no HANDOFF.txt existed before)
+================================================================
+
+0. WHAT THIS REPO IS
+----------------------------------------------------------------
+Next.js 15 + Tailwind 4 app: Streak pipeline tracking, objectives
+and monthly analytics. Live at company.gershonCRM.com.
+Deploy route: GitHub Actions (.github/workflows/deploy.yml) on every
+push to main. It auto-bumps the patch version, builds with
+@cloudflare/next-on-pages and deploys to the Cloudflare Pages
+projects gershon-company (production, company.gershoncrm.com) and
+gershoncrm-company (mirror). Branches are NOT deployed, so there is
+no pages.dev test link for a branch.
+Settings + users live in the SETTINGS KV namespace (wrangler.jsonc).
+Version shown in the sidebar comes from package.json (lib/version.ts).
+
+----------------------------------------------------------------
+2026-10-22 nightly
+----------------------------------------------------------------
+Branch : nightly/2026-10-22-company-unified
+PR     : https://github.com/gershonconsulting/company/pull/2
+Version: 1.0.50 -> 1.1.0 (live becomes 1.1.1 after the deploy
+         job's automatic patch bump on merge)
+
+What the PR does (UI/CSS only - no API, data or auth change):
+  Unified Gershon design (decision 2026-10-13: every app looks like
+  Linalysis, main colour Gershon.ai red #CC3333; same approach as
+  Radar PR #4 and Pulse).
+  - New app/unified-theme.css, imported LAST in app/layout.tsx.
+    Brand tokens indigo -> red (#CC3333 / #a8281f / #fdf2f2),
+    text #1d1d1f, borders #e5e7eb, new neutral --series slate.
+  - Sidebar: white 240px, solid red active pill, red-tint hover.
+    <=880px: becomes a top bar with scrollable nav pills and a
+    compact Settings / Demo / Log out row (fixes the phone layout).
+  - White page header bar on every page; flat white 12px cards.
+  - Red buttons, persona tabs, owner filter, 3/6/12-mo period
+    switches; red focus rings on all inputs.
+  - Sign-in: light background, red button, red closing band.
+  - DEMO badge moved bottom-right (it covered the title/Refresh).
+  - Status colours kept (priority High/Medium/Low, freshness,
+    closing green, momentum, success/warning/danger). Neutral
+    totals (funnel, new-leads bars, track record, trend line,
+    Active Leads tile) are slate, never red.
+
+  [OK] Ready to test on preview: private Claude artifact
+       "Company Unified Design"
+       https://claude.ai/artifact/Wpj3rsKnGane8KkE3etsyk
+       (real screens from this branch with demo data: sign-in,
+       dashboard desktop + 390px phone, Today, Monthly Reports).
+  [OK] next build passes; tsc error count identical to main (20,
+       all pre-existing; build ignores them).
+  [OK] Playwright: all 10 pages at 1280px and 390px, demo mode,
+       0 console errors, 0 horizontal scroll.
+  [TODO] Not seen on real Streak data yet (needs the merge, or a
+       signed-in session on a deployed build).
+  [TODO] package-lock.json version field not bumped (file too big
+       for the API path used); the deploy job rewrites it.
+  [TODO] GERSHON_SIDEBAR_STANDARD.md still documents the old indigo
+       tokens - update it once the red standard is final.
+
+Next action: Olivier reviews the preview and merges PR #2 (merge =
+live deploy). After merge, open company.gershonCRM.com, check the
+sidebar shows v1.1.1 and the dashboard renders with live data.
+================================================================

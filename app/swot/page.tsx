@@ -5,8 +5,8 @@ import { Layers } from "lucide-react";
 
 export default function SwotPage() {
   return (
-    <main className="min-h-screen p-6 md:p-10">
-      <div className="mb-6 flex items-start justify-between flex-wrap gap-4">
+    <main className="gx-page min-h-screen p-6 md:p-10">
+      <div className="gx-page-head mb-6 flex items-start justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <Layers size={24} className="text-[color:var(--brand)]" />
           <div>

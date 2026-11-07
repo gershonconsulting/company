@@ -67,19 +67,19 @@ export default function Sidebar() {
 
   return (
     <aside
-      className="flex-shrink-0 bg-white text-slate-600 border-r flex flex-col sticky top-0 h-screen"
-      style={{ width: 250, borderColor: "var(--side-line)" }}
+      className="gx-sidebar flex-shrink-0 bg-white text-slate-600 border-r flex flex-col sticky top-0 h-screen"
+      style={{ width: "var(--sidebar-w)", borderColor: "var(--side-line)" }}
     >
       {/* Brand block: <Product> big + BY GERSHON.AI eyebrow */}
-      <div className="flex items-center gap-2.5 px-5 pt-5 pb-1">
+      <div className="gx-brand flex items-center gap-2.5 px-5 pt-5 pb-1">
         <span className="flex items-center text-[color:var(--brand)]">
           <PulseLogo size={24} />
         </span>
-        <h1 className="text-[1.35rem] font-extrabold tracking-tight text-[color:var(--brand)]">
+        <h1 className="text-[1.3rem] font-extrabold tracking-tight text-[color:var(--brand)]">
           Company
         </h1>
       </div>
-      <div className="px-5 pt-1.5 pb-4 mb-1 border-b" style={{ borderColor: "var(--side-line)" }}>
+      <div className="gx-brand-meta px-5 pt-1.5 pb-4 mb-1 border-b" style={{ borderColor: "var(--side-line)" }}>
         <div className="text-[0.66rem] font-bold tracking-[0.13em] text-slate-400 uppercase">
           by Gershon.AI
         </div>
@@ -92,11 +92,11 @@ export default function Sidebar() {
       </div>
 
       {/* Scrollable nav */}
-      <nav className="flex-1 overflow-y-auto flex flex-col gap-0.5 px-3 py-1.5">
+      <nav className="gx-nav flex-1 overflow-y-auto flex flex-col gap-0.5 px-3 py-1.5">
         {sections.map((section, si) => (
-          <div key={si}>
+          <div key={si} className="gx-nav-group">
             {section.heading && (
-              <div className="text-[0.66rem] font-bold tracking-[0.13em] text-slate-400 uppercase px-3 pt-4 pb-1.5">
+              <div className="gx-nav-sec text-[0.66rem] font-bold tracking-[0.13em] text-slate-400 uppercase px-3 pt-4 pb-1.5">
                 {section.heading}
               </div>
             )}
@@ -106,10 +106,11 @@ export default function Sidebar() {
                 <Link
                   key={href}
                   href={href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-[9px] text-[0.92rem] font-semibold w-full text-left transition-colors ${
+                  aria-current={active ? "page" : undefined}
+                  className={`gx-nav-item flex items-center gap-3 px-3 py-2.5 rounded-[8px] text-[0.92rem] w-full text-left transition-colors ${
                     active
-                      ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                      ? "gx-active bg-[color:var(--brand)] text-white font-semibold"
+                      : "font-medium text-[color:var(--text)] hover:bg-[color:var(--brand-soft)] hover:text-[color:var(--brand)]"
                   }`}
                 >
                   <span className="w-5 flex items-center justify-center shrink-0">
@@ -124,14 +125,15 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer — Settings, Demo, Log out, domain (in that order) */}
-      <div className="px-3.5 pt-3 pb-2 border-t flex flex-col gap-1.5" style={{ borderColor: "var(--side-line)" }}>
+      <div className="gx-foot px-3.5 pt-3 pb-2 border-t flex flex-col gap-1.5" style={{ borderColor: "var(--side-line)" }}>
         {/* Settings — first */}
         <Link
           href="/settings"
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold transition-colors ${
+          aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+          className={`gx-foot-btn flex items-center gap-2.5 px-3 py-2.5 rounded-[8px] text-[0.9rem] font-semibold transition-colors ${
             pathname.startsWith("/settings")
-              ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
-              : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+              ? "gx-active bg-[color:var(--brand)] text-white"
+              : "text-[color:var(--text)] hover:bg-[color:var(--brand-soft)] hover:text-[color:var(--brand)]"
           }`}
         >
           <span className="w-5 flex items-center justify-center shrink-0">
@@ -144,10 +146,10 @@ export default function Sidebar() {
         <button
           onClick={toggleDemo}
           aria-pressed={demoMode}
-          className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold text-left transition-colors ${
+          className={`gx-foot-btn flex items-center gap-2.5 px-3 py-2.5 rounded-[8px] text-[0.9rem] font-semibold text-left transition-colors ${
             demoMode
               ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]"
-              : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+              : "text-[color:var(--text)] hover:bg-[color:var(--brand-soft)] hover:text-[color:var(--brand)]"
           }`}
           title={demoMode ? "Currently in demo mode — click to switch back to live data" : "Show a bundled fake dataset for demos (never writes to the backend)"}
         >
@@ -160,7 +162,7 @@ export default function Sidebar() {
         {/* Log out — very bottom, red-accented */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2.5 px-3 py-2.5 rounded-[11px] text-[0.9rem] font-semibold text-left text-[color:var(--danger)] hover:bg-[color:var(--danger-soft)] hover:text-[#b91c1c] transition-colors"
+          className="gx-foot-btn gx-logout flex items-center gap-2.5 px-3 py-2.5 rounded-[8px] text-[0.9rem] font-semibold text-left text-[color:var(--danger)] hover:bg-[color:var(--danger-soft)] hover:text-[#b91c1c] transition-colors"
         >
           <span className="w-5 flex items-center justify-center shrink-0">
             <LogOut size={18} />
@@ -169,7 +171,7 @@ export default function Sidebar() {
         </button>
 
         {/* Domain */}
-        <div className="text-center text-[0.72rem] text-slate-400 pt-1.5 pb-1">
+        <div className="gx-domain text-center text-[0.72rem] text-slate-400 pt-1.5 pb-1">
           company.gershonCRM.com
         </div>
       </div>

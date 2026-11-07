@@ -19,7 +19,7 @@ function Funnel({ funnel, total }: { funnel: FunnelStage[]; total: number }) {
           </div>
           <div className="flex-1 h-7 bg-gray-100 rounded-md overflow-hidden relative">
             <div
-              className={`h-full transition-all ${f.isClosing ? "bg-emerald-500" : "bg-[color:var(--brand)]"}`}
+              className={`h-full transition-all ${f.isClosing ? "bg-emerald-500" : "bg-[color:var(--series)]"}`}
               style={{ width: `${(f.count / max) * 100}%` }}
             />
             <div className="absolute inset-0 flex items-center justify-end pr-2">
@@ -77,7 +77,7 @@ export default function AnalysisPanel() {
           <span className="ml-auto text-xs font-normal text-gray-400">last {data.monthlyAllIntake.length}mo · {newLeadsTotal} total · ~{newLeadsAvg.toFixed(1)}/mo</span>
         </h3>
         <p className="text-xs text-gray-400 mb-4">How many new leads we added to the pipeline each month (all priorities).</p>
-        <InteractiveMonthlyBar data={data.monthlyAllIntake} color="#FE1B04" metric="intake" />
+        <InteractiveMonthlyBar data={data.monthlyAllIntake} color="#475569" metric="intake" />
       </div>
 
       {/* Secondary: High Priority intake + Reached Closing side-by-side */}

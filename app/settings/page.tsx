@@ -179,21 +179,21 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 md:p-10">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-6 flex items-start justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-3">
-            <SettingsIcon size={24} className="text-[color:var(--brand)]" />
-            <div>
-              <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Settings</h1>
-              <p className="text-sm text-gray-500 mt-1">Streak credentials, business assumptions, and weekly report delivery.</p>
-            </div>
+    <main className="gx-page min-h-screen p-6 md:p-10">
+      <div className="gx-page-head mb-6 flex items-start justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <SettingsIcon size={24} className="text-[color:var(--brand)]" />
+          <div>
+            <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">Settings</h1>
+            <p className="text-sm text-gray-500 mt-1">Streak credentials, business assumptions, and weekly report delivery.</p>
           </div>
-          <button onClick={loadSettings} disabled={loading}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 mt-1">
-            <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Reload
-          </button>
         </div>
+        <button onClick={loadSettings} disabled={loading}
+          className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 mt-1">
+          <RefreshCw size={12} className={loading ? "animate-spin" : ""} /> Reload
+        </button>
+      </div>
+      <div className="max-w-3xl mx-auto">
 
         {loading ? (
           <div className="text-sm text-gray-400 animate-pulse">Loading…</div>
@@ -233,7 +233,7 @@ export default function SettingsPage() {
               />
             </div>
 
-            {/* ── Weekly report ────────────────────────────────────────── */}
+            {/* ── Weekly report ──────────────────────────────────────────── */}
             <div className="bg-white rounded-xl shadow p-5 border-t-4 border-[color:var(--brand)]">
               <div className="flex items-center gap-2 mb-1">
                 <Mail size={16} className="text-[color:var(--brand)]" />
@@ -303,7 +303,7 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* ── Business assumptions ─────────────────────────────────── */}
+            {/* ── Business assumptions ───────────────────────────────── */}
             <div className="bg-white rounded-xl shadow p-5">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign size={16} className="text-[color:var(--brand)]" />
