@@ -8,10 +8,10 @@
   --background:  #ffffff;
   --foreground:  #1f2937;
 
-  /* Brand — indigo, from the Gershon.AI logo */
-  --brand:       #6366f1;
-  --brand-ink:   #4f46e5;
-  --brand-soft:  #eef0fe;
+  /* Brand red — the red from the Gershon logo and website (Olivier, 2026-11-10) */
+  --brand:       #FE1B04;
+  --brand-ink:   #d11200;
+  --brand-soft:  #fff5f5;
 
   /* Legacy aliases (kept for gradual migration — do not use in new code) */
   --brand-dark:  var(--brand-ink);

@@ -100,7 +100,7 @@ async function run(req: NextRequest) {
   }
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────────────
 
 function weekLabel(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "America/New_York" });
@@ -183,7 +183,7 @@ function renderHTML(a: RenderArgs): string {
     <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border:1px solid #eef0f4;border-radius:14px;overflow:hidden;">
       <!-- Header -->
       <tr><td style="padding:24px 28px 8px;">
-        <div style="font-size:22px;font-weight:800;color:#6366f1;letter-spacing:-0.01em;">Company <span style="color:#94a3b8;font-weight:700;font-size:12px;letter-spacing:0.13em;text-transform:uppercase;margin-left:4px;">by Gershon.AI</span></div>
+        <div style="font-size:22px;font-weight:800;color:#FE1B04;letter-spacing:-0.01em;">Company <span style="color:#94a3b8;font-weight:700;font-size:12px;letter-spacing:0.13em;text-transform:uppercase;margin-left:4px;">by Gershon.AI</span></div>
         <div style="font-size:14px;color:#64748b;margin-top:2px;">Weekly Pipeline Report · ${a.week}</div>
       </td></tr>
 
@@ -192,7 +192,7 @@ ${momentumBlock(a.momentum)}
             <!-- KPI hero -->
       <tr><td style="padding:12px 28px 0;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-          ${kpiCell("Active leads",     String(bd.total), `${inClosing} in closing`, "#6366f1")}
+          ${kpiCell("Active leads",     String(bd.total), `${inClosing} in closing`, "#FE1B04")}
           ${kpiCell(`New this month`, String(a.newNow), deltaStr(a.newNow, a.newPrev), deltaColor(a.newNow, a.newPrev))}
           ${kpiCell(`Reached closing`, String(a.clNow), deltaStr(a.clNow, a.clPrev), deltaColor(a.clNow, a.clPrev))}
           ${kpiCell("Active follow-ups", String(a.activeFollowUpCount), `${bd.nextDueDatePct}% of pipeline`, bd.nextDueDatePct >= 50 ? "#10b981" : "#f59e0b")}
@@ -201,9 +201,9 @@ ${momentumBlock(a.momentum)}
 
       <!-- Narrative -->
       <tr><td style="padding:16px 28px 0;">
-        <div style="padding:14px 16px;background:#f8fafc;border-left:4px solid #6366f1;border-radius:8px;font-size:14px;color:#334155;line-height:1.6;">
+        <div style="padding:14px 16px;background:#f8fafc;border-left:4px solid #FE1B04;border-radius:8px;font-size:14px;color:#334155;line-height:1.6;">
           <strong>What happened this week / month:</strong>
-          We added <strong style="color:#6366f1;">${a.newNow}</strong> new leads
+          We added <strong style="color:#FE1B04;">${a.newNow}</strong> new leads
           (${deltaStr(a.newNow, a.newPrev)}), pushed <strong style="color:#10b981;">${a.clNow}</strong> into closing stages
           (${deltaStr(a.clNow, a.clPrev)}), and retired <strong style="color:#f59e0b;">${a.rmNow}</strong>
           (${deltaStr(a.rmNow, a.rmPrev)}).
@@ -252,7 +252,7 @@ ${momentumBlock(a.momentum)}
 
       <!-- Footer -->
       <tr><td style="padding:24px 28px;background:#f8fafc;border-top:1px solid #eef0f4;font-size:12px;color:#94a3b8;text-align:center;margin-top:20px;">
-        <a href="https://company.gershoncrm.com/" style="color:#6366f1;font-weight:700;text-decoration:none;">Open the dashboard →</a><br>
+        <a href="https://company.gershoncrm.com/" style="color:#FE1B04;font-weight:700;text-decoration:none;">Open the dashboard →</a><br>
         <span style="margin-top:6px;display:inline-block;">company.gershonCRM.com · sent automatically every Monday</span>
       </td></tr>
     </table>
