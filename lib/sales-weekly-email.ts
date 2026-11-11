@@ -1,7 +1,7 @@
 // HTML email for the Monday sales report. See lib/sales-weekly.ts.
 import type { SalesWeekly, LeadRow, JobStatus } from "./sales-weekly";
 
-// ── Rendering ─────────────────────────────────────────────────────────────
+// ── Rendering ───────────────────────────────────────────────────────────────────────────
 
 const STATUS: Record<JobStatus, { label: string; color: string; bg: string }> = {
   "on-track": { label: "On track", color: "#059669", bg: "#ecfdf5" },
@@ -49,7 +49,7 @@ function h4(t: string): string {
 function jobCard(n: number, title: string, status: JobStatus, isFocus: boolean, body: string): string {
   const s = STATUS[status];
   return `<tr><td style="padding:16px 28px 0;">
-    <div style="border:1px solid ${isFocus ? "#6366f1" : "#eef0f4"};border-radius:14px;overflow:hidden;">
+    <div style="border:1px solid ${isFocus ? "#FE1B04" : "#eef0f4"};border-radius:14px;overflow:hidden;">
       <div style="padding:12px 16px;background:${s.bg};border-bottom:1px solid #eef0f4;">
         <span style="font-size:16px;font-weight:800;color:#111;">${n}. ${esc(title)}</span>
         <span style="float:right;font-size:12px;font-weight:800;color:${s.color};">${s.label}${isFocus ? " · FOCUS" : ""}</span>
@@ -106,13 +106,13 @@ export function renderSalesWeeklyHTML(r: SalesWeekly): string {
   <tr><td align="center">
     <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border:1px solid #eef0f4;border-radius:14px;overflow:hidden;">
       <tr><td style="padding:24px 28px 4px;">
-        <div style="font-size:22px;font-weight:800;color:#6366f1;letter-spacing:-0.01em;">Sales Weekly <span style="color:#94a3b8;font-weight:700;font-size:12px;letter-spacing:0.13em;text-transform:uppercase;margin-left:4px;">by Gershon.AI</span></div>
+        <div style="font-size:22px;font-weight:800;color:#FE1B04;letter-spacing:-0.01em;">Sales Weekly <span style="color:#94a3b8;font-weight:700;font-size:12px;letter-spacing:0.13em;text-transform:uppercase;margin-left:4px;">by Gershon.AI</span></div>
         <div style="font-size:14px;color:#64748b;margin-top:2px;">Last week ${esc(r.periodLabel)} · This week ${esc(r.nextLabel)}</div>
       </td></tr>
 
       <tr><td style="padding:14px 28px 0;">
-        <div style="padding:14px 16px;background:#eef2ff;border-left:4px solid #6366f1;border-radius:8px;">
-          <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#4f46e5;">Focus this week</div>
+        <div style="padding:14px 16px;background:#fff5f5;border-left:4px solid #FE1B04;border-radius:8px;">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#d11200;">Focus this week</div>
           <div style="font-size:18px;font-weight:800;color:#111;margin-top:2px;">${esc(r.focus.title)}</div>
           <div style="font-size:13px;color:#334155;margin-top:4px;line-height:1.5;">${esc(r.focus.why)}</div>
           <ol style="margin:10px 0 0 18px;padding:0;font-size:13px;color:#1f2937;line-height:1.55;">
@@ -136,7 +136,7 @@ export function renderSalesWeeklyHTML(r: SalesWeekly): string {
       ${jobCard(3, "Close leads", c.status, r.focus.job === "close", closeBody)}
 
       <tr><td style="padding:24px 28px;background:#f8fafc;border-top:1px solid #eef0f4;font-size:12px;color:#94a3b8;text-align:center;">
-        <a href="https://company.gershoncrm.com/" style="color:#6366f1;font-weight:700;text-decoration:none;">Open the dashboard →</a><br>
+        <a href="https://company.gershoncrm.com/" style="color:#FE1B04;font-weight:700;text-decoration:none;">Open the dashboard →</a><br>
         <span style="margin-top:6px;display:inline-block;">company.gershonCRM.com · Streak pipeline · sent automatically every Monday</span>
       </td></tr>
     </table>
