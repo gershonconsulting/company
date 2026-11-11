@@ -1,0 +1,11 @@
+================================================================
+HANDOFF.txt  -  company  (company.gershoncrm.com)
+Written by: Claude (Anthropic) - 2026-11-11
+================================================================
+READ FIRST: github.com/gershonconsulting/memory -> HANDOFF.txt
+Rules: Olivier never runs commands, uploads or clicks injected buttons.
+End replies with GREEN CHECK (ready to test + link) or RED CROSS (+3 options).
+
+STATUS
+✅ 2026-11-11 brand red #FE1B04 (nightly) — ready to test after merge. v1.0.53: --brand #FE1B04 / ink #d11200 / soft #fff5f5 (was indigo #6366f1 / #4f46e5 / #eef0fe) per Olivier 2026-11-10; trend chart, home bar chart, weekly + sales-weekly emails. GERSHON_DESIGN_SYSTEM.md / GERSHON_SIDEBAR_STANDARD.md still describe indigo - not updated. Indigo kept only as a category colour (Low priority chip, Warm freshness, "On pace", admin role chip).
+(Note: PR #4 also adds a HANDOFF.txt - merge #4 first or resolve the conflict.)
