@@ -17,13 +17,13 @@ export type ActionKind =
   | "no-next-step"   // live lead with no open task
   | "going-cold";    // mid-funnel lead drifting
 
-export const ACTION_META: Record<ActionKind, { label: string; weight: number; tone: "red" | "amber" | "indigo" }> = {
+export const ACTION_META: Record<ActionKind, { label: string; weight: number; tone: "red" | "amber" | "slate" }> = {
   "reply":        { label: "Waiting on our reply",   weight: 100, tone: "red" },
   "overdue":      { label: "Overdue task",           weight: 80,  tone: "red" },
   "hot-open":     { label: "Opened our email",       weight: 70,  tone: "amber" },
   "closing":      { label: "Deal needs follow-up",   weight: 60,  tone: "amber" },
   "going-cold":   { label: "Going cold",             weight: 40,  tone: "amber" },
-  "no-next-step": { label: "No next step",           weight: 30,  tone: "indigo" },
+  "no-next-step": { label: "No next step",           weight: 30,  tone: "slate" },
 };
 
 export interface ActionReason { kind: ActionKind; text: string; todo: string; weight?: number; }
@@ -62,7 +62,7 @@ export interface ActionsPayload {
   history?:    { date: string; values: Record<string, number> }[];
 }
 
-// ── Stage helpers ─────────────────────────────────────────────────────────
+// ── Stage helpers ───────────────────────────────────────────────────────────────
 const STAGE_PROB: [RegExp, number][] = [
   [/recycl|lost|reject|archiv|dead/i, 0],
   [/clos/i,       0.85],
@@ -86,7 +86,7 @@ function stageOrder(name: string): number {
   return m ? parseInt(m[1], 10) : 99;
 }
 
-// ── Box helpers ───────────────────────────────────────────────────────────
+// ── Box helpers ───────────────────────────────────────────────────────────────
 type AnyBox = StreakBox & Record<string, unknown>;
 function num(v: unknown): number {
   if (typeof v === "number") return v;
@@ -119,7 +119,7 @@ function priorityOf(b: AnyBox, mapping: PriorityFieldMapping): LeadAction["prior
 }
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
-// ── Main ──────────────────────────────────────────────────────────────────
+// ── Main ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 export function computeActions(
   boxes: StreakBox[],
   stageNames: Map<string, string>,
