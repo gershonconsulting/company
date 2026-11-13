@@ -1,7 +1,7 @@
 // HTML email for the Monday sales report. See lib/sales-weekly.ts.
 import type { SalesWeekly, LeadRow, JobStatus } from "./sales-weekly";
 
-// ── Rendering ──────────────────────────────────────────────────────────────────────────────────────────────
+// ── Rendering ───────────────────────────────────────────────────────────────────────────
 
 const STATUS: Record<JobStatus, { label: string; color: string; bg: string }> = {
   "on-track": { label: "On track", color: "#059669", bg: "#ecfdf5" },
