@@ -86,7 +86,7 @@ function stageOrder(name: string): number {
   return m ? parseInt(m[1], 10) : 99;
 }
 
-// ── Box helpers ───────────────────────────────────────────────────────────────
+// ── Box helpers ───────────────────────────────────────────────────────────
 type AnyBox = StreakBox & Record<string, unknown>;
 function num(v: unknown): number {
   if (typeof v === "number") return v;
@@ -119,7 +119,7 @@ function priorityOf(b: AnyBox, mapping: PriorityFieldMapping): LeadAction["prior
 }
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
-// ── Main ──────────────────────────────────────────────────────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────
 export function computeActions(
   boxes: StreakBox[],
   stageNames: Map<string, string>,
