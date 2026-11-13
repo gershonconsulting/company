@@ -107,7 +107,7 @@ export default function TeamAccess() {
                 <tr key={u.email}>
                   <td className="py-2 pr-3 font-medium text-gray-800">{u.email}</td>
                   <td className="py-2 pr-3 text-gray-600">{u.name}</td>
-                  <td className="py-2 pr-3"><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${u.role === "admin" ? "bg-indigo-50 text-indigo-700" : "bg-gray-100 text-gray-600"}`}>{u.role}</span></td>
+                  <td className="py-2 pr-3"><span className={`text-xs font-bold px-2 py-0.5 rounded-full ${u.role === "admin" ? "bg-[color:var(--brand-soft)] text-[color:var(--brand-ink)]" : "bg-gray-100 text-gray-600"}`}>{u.role}</span></td>
                   <td className="py-2 text-right">
                     {u.email !== me.email && (
                       <button type="button" onClick={() => remove(u.email)} disabled={busy}

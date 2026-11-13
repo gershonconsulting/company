@@ -45,13 +45,13 @@ export function useActions() {
 export const fmtUSD = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
-export const TONE: Record<"red" | "amber" | "indigo", string> = {
+export const TONE: Record<"red" | "amber" | "slate", string> = {
   red:    "bg-red-50 text-red-700 border-red-200",
   amber:  "bg-amber-50 text-amber-800 border-amber-200",
-  indigo: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  slate: "bg-slate-50 text-slate-700 border-slate-200",
 };
 
 export function PriorityPill({ p }: { p: LeadAction["priority"] }) {
-  const cls = p === "High" ? "bg-red-50 text-red-700" : p === "Medium" ? "bg-amber-50 text-amber-700" : p === "Low" ? "bg-indigo-50 text-indigo-700" : "bg-gray-100 text-gray-500";
+  const cls = p === "High" ? "bg-red-50 text-red-700" : p === "Medium" ? "bg-amber-50 text-amber-700" : p === "Low" ? "bg-slate-50 text-slate-700" : "bg-gray-100 text-gray-500";
   return <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${cls}`}>{p}</span>;
 }

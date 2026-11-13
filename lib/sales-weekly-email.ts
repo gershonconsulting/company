@@ -1,7 +1,7 @@
 // HTML email for the Monday sales report. See lib/sales-weekly.ts.
 import type { SalesWeekly, LeadRow, JobStatus } from "./sales-weekly";
 
-// ── Rendering ───────────────────────────────────────────────────────────────────────────
+// ── Rendering ──────────────────────────────────────────────────────────────────────────────────────────────
 
 const STATUS: Record<JobStatus, { label: string; color: string; bg: string }> = {
   "on-track": { label: "On track", color: "#059669", bg: "#ecfdf5" },
@@ -14,7 +14,7 @@ function esc(s: string): string {
 }
 
 function pill(p: LeadRow["priority"]): string {
-  const c = p === "High" ? ["#fee2e2", "#b91c1c"] : p === "Medium" ? ["#fef3c7", "#92400e"] : p === "Low" ? ["#eef0fe", "#4f46e5"] : ["#f1f5f9", "#64748b"];
+  const c = p === "High" ? ["#fee2e2", "#b91c1c"] : p === "Medium" ? ["#fef3c7", "#92400e"] : p === "Low" ? ["#f1f5f9", "#475569"] : ["#f1f5f9", "#64748b"];
   return `<span style="background:${c[0]};color:${c[1]};padding:1px 7px;border-radius:9999px;font-size:11px;font-weight:700;">${p}</span>`;
 }
 

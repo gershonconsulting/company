@@ -102,7 +102,7 @@ export function KpiTile({
   label, value, sub, accent, icon,
 }: {
   label: string; value: string | number; sub?: React.ReactNode;
-  accent: "brand" | "blue" | "yellow" | "purple" | "green" | "red" | "indigo";
+  accent: "brand" | "blue" | "yellow" | "purple" | "green" | "red" | "slate";
   icon?: React.ReactNode;
 }) {
   const accentBorder = {
@@ -112,7 +112,7 @@ export function KpiTile({
     purple: "border-purple-500",
     green:  "border-green-500",
     red:    "border-red-500",
-    indigo: "border-indigo-500",
+    slate: "border-slate-500",
   }[accent];
   return (
     <div className={`bg-white rounded-xl shadow p-5 border-t-4 ${accentBorder}`}>
