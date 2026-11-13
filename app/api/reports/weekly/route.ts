@@ -139,7 +139,7 @@ function renderHTML(a: RenderArgs): string {
 
   const funnelRows = an.funnel.map((f) => {
     const pct = bd.total > 0 ? Math.round((f.count / bd.total) * 100) : 0;
-    const bar = f.isClosing ? "#10b981" : "#6366f1";
+    const bar = f.isClosing ? "#10b981" : "#64748b";
     return `
       <tr>
         <td style="padding:6px 8px;color:#374151;font-size:13px;">${escapeHtml(f.stageName)}${f.isClosing ? ' 🏆' : ''}${f.isRemoved ? ' 🗑' : ''}</td>
@@ -165,7 +165,7 @@ function renderHTML(a: RenderArgs): string {
       <td style="padding:6px 8px;color:#111;font-weight:600;font-size:13px;">${escapeHtml(l.name)}</td>
       <td style="padding:6px 8px;color:#6b7280;font-size:13px;">${escapeHtml(l.stageName)}</td>
       <td style="padding:6px 8px;font-size:12px;">
-        <span style="background:${l.priority === 'High' ? '#fee2e2' : l.priority === 'Medium' ? '#fef3c7' : '#eef0fe'};color:${l.priority === 'High' ? '#b91c1c' : l.priority === 'Medium' ? '#92400e' : '#4f46e5'};padding:2px 8px;border-radius:9999px;font-weight:700;">${l.priority}</span>
+        <span style="background:${l.priority === 'High' ? '#fee2e2' : l.priority === 'Medium' ? '#fef3c7' : '#f1f5f9'};color:${l.priority === 'High' ? '#b91c1c' : l.priority === 'Medium' ? '#92400e' : '#475569'};padding:2px 8px;border-radius:9999px;font-weight:700;">${l.priority}</span>
       </td>
       <td style="padding:6px 8px;text-align:right;color:#dc2626;font-weight:600;font-size:13px;">${l.daysInactive}d</td>
     </tr>`).join("");
@@ -222,7 +222,7 @@ ${momentumBlock(a.momentum)}
         </div>
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
           ${freshRow("Hot",   "≤ 7d",   fr.high,   freshTot, "#10b981")}
-          ${freshRow("Warm",  "8-30d",  fr.medium, freshTot, "#6366f1")}
+          ${freshRow("Warm",  "8-30d",  fr.medium, freshTot, "#64748b")}
           ${freshRow("Cool",  "31-90d", fr.low,    freshTot, "#f59e0b")}
           ${freshRow("Stale", "> 90d",  fr.stale,  freshTot, "#dc2626")}
           ${freshRow("Never", "no touch", fr.never, freshTot, "#94a3b8")}
@@ -290,8 +290,8 @@ function escapeHtml(s: string): string {
 }
 
 function momentumBlock(m: Momentum): string {
-  const color = m.overall === "slowing" ? "#dc2626" : m.overall === "softening" ? "#f59e0b" : m.overall === "growing" ? "#10b981" : "#6366f1";
-  const bg    = m.overall === "slowing" ? "#fef2f2" : m.overall === "softening" ? "#fffbeb" : m.overall === "growing" ? "#ecfdf5" : "#eef2ff";
+  const color = m.overall === "slowing" ? "#dc2626" : m.overall === "softening" ? "#f59e0b" : m.overall === "growing" ? "#10b981" : "#64748b";
+  const bg    = m.overall === "slowing" ? "#fef2f2" : m.overall === "softening" ? "#fffbeb" : m.overall === "growing" ? "#ecfdf5" : "#f1f5f9";
   const rows = m.metrics.map((x) => {
     const c = x.status === "slowing" ? "#dc2626" : x.status === "softening" ? "#f59e0b" : x.status === "growing" ? "#10b981" : "#64748b";
     const pct = x.coverage ? `${x.coverage.pct30}% worked` : x.changePct === null ? "n/a" : `${x.changePct > 0 ? "+" : ""}${x.changePct}%`;

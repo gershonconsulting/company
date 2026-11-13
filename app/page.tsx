@@ -114,7 +114,7 @@ export default function Dashboard() {
   const priorityData = bd.data ? [
     { name: "High",   value: bd.data.high,   fill: "#dc2626" },
     { name: "Medium", value: bd.data.medium, fill: "#f59e0b" },
-    { name: "Low",    value: bd.data.low,    fill: "#6366f1" },
+    { name: "Low",    value: bd.data.low,    fill: "#64748b" },
     { name: "Unset",  value: bd.data.unset,  fill: "#94a3b8" },
   ].filter((d) => d.value > 0) : [];
 
@@ -251,7 +251,7 @@ export default function Dashboard() {
                   <strong className="text-gray-700">Read:</strong>{" "}
                   High = <strong className="text-red-700">{bd.data?.high}</strong>,
                   Medium = <strong className="text-amber-700">{bd.data?.medium}</strong>,
-                  Low = <strong className="text-[color:var(--brand)]">{bd.data?.low}</strong>.
+                  Low = <strong className="text-slate-600">{bd.data?.low}</strong>.
                   {bd.data && total > 0 && (bd.data.high / total) < 0.1 && " High Priority is thin — focus qualification."}
                 </p>
               </div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
                   New leads — by month
                 </h3>
                 <p className="text-xs text-gray-400 mb-3">How many leads enter the pipeline each month (all priorities). Click a bar for the leads behind it.</p>
-                <InteractiveMonthlyBar data={an.data!.monthlyAllIntake} color="#6366f1" metric="intake" height={200} />
+                <InteractiveMonthlyBar data={an.data!.monthlyAllIntake} color="#FE1B04" metric="intake" height={200} />
               </div>
               <div className="bg-white rounded-xl shadow p-5">
                 <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center">
