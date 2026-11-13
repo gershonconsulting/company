@@ -62,7 +62,7 @@ export interface ActionsPayload {
   history?:    { date: string; values: Record<string, number> }[];
 }
 
-// ── Stage helpers ───────────────────────────────────────────────────────────────
+// ── Stage helpers ─────────────────────────────────────────────────────────
 const STAGE_PROB: [RegExp, number][] = [
   [/recycl|lost|reject|archiv|dead/i, 0],
   [/clos/i,       0.85],
@@ -119,7 +119,7 @@ function priorityOf(b: AnyBox, mapping: PriorityFieldMapping): LeadAction["prior
 }
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? "" : "s"}`;
 
-// ── Main ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+// ── Main ──────────────────────────────────────────────────────────────────────────────────────────────────
 export function computeActions(
   boxes: StreakBox[],
   stageNames: Map<string, string>,
