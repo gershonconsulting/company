@@ -26,7 +26,7 @@ interface FreshnessLead {
 
 const BUCKETS = [
   { key: "high",   label: "Hot",     range: "≤ 7d",   color: "#10b981", icon: Zap        },
-  { key: "medium", label: "Warm",    range: "8-30d",  color: "#6366f1", icon: Clock      },
+  { key: "medium", label: "Warm",    range: "8-30d",  color: "#64748b", icon: Clock      },
   { key: "low",    label: "Cool",    range: "31-90d", color: "#f59e0b", icon: Clock      },
   { key: "stale",  label: "Stale",   range: "> 90d",  color: "#dc2626", icon: Snowflake  },
   { key: "never",  label: "Never",   range: "no touch", color: "#94a3b8", icon: HelpCircle },
@@ -89,7 +89,7 @@ export default function FreshnessWidget({ counts }: { counts: FreshnessCounts })
               contentStyle={{ borderRadius: 12, border: "1px solid #e5e7eb", boxShadow: "0 4px 12px rgba(0,0,0,0.08)", fontSize: 12 }}
               labelStyle={{ fontWeight: 700, color: "#111" }}
               formatter={(v: number, _n, o: { payload?: { range?: string } }) => [`${v} leads · ${o?.payload?.range ?? ""}`, "count"]}
-              cursor={{ fill: "rgba(99,102,241,0.06)" }}
+              cursor={{ fill: "rgba(100,116,139,0.06)" }}
             />
             <Bar
               dataKey="value"

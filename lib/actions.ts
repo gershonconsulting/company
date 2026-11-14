@@ -17,13 +17,13 @@ export type ActionKind =
   | "no-next-step"   // live lead with no open task
   | "going-cold";    // mid-funnel lead drifting
 
-export const ACTION_META: Record<ActionKind, { label: string; weight: number; tone: "red" | "amber" | "indigo" }> = {
+export const ACTION_META: Record<ActionKind, { label: string; weight: number; tone: "red" | "amber" | "slate" }> = {
   "reply":        { label: "Waiting on our reply",   weight: 100, tone: "red" },
   "overdue":      { label: "Overdue task",           weight: 80,  tone: "red" },
   "hot-open":     { label: "Opened our email",       weight: 70,  tone: "amber" },
   "closing":      { label: "Deal needs follow-up",   weight: 60,  tone: "amber" },
   "going-cold":   { label: "Going cold",             weight: 40,  tone: "amber" },
-  "no-next-step": { label: "No next step",           weight: 30,  tone: "indigo" },
+  "no-next-step": { label: "No next step",           weight: 30,  tone: "slate" },
 };
 
 export interface ActionReason { kind: ActionKind; text: string; todo: string; weight?: number; }

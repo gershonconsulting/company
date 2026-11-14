@@ -13,7 +13,7 @@ import { RECENT_WEEKS } from "@/lib/momentum";
 const STATUS: Record<MomentumStatus, { label: string; color: string; bg: string; text: string }> = {
   slowing:       { label: "Slowing down", color: "#dc2626", bg: "bg-red-50",     text: "text-red-700" },
   softening:     { label: "Softening",    color: "#f59e0b", bg: "bg-amber-50",   text: "text-amber-700" },
-  steady:        { label: "On pace",      color: "#6366f1", bg: "bg-indigo-50",  text: "text-indigo-700" },
+  steady:        { label: "On pace",      color: "#64748b", bg: "bg-slate-50",  text: "text-slate-700" },
   growing:       { label: "Growing",      color: "#10b981", bg: "bg-emerald-50", text: "text-emerald-700" },
   "no-baseline": { label: "Not enough history", color: "#94a3b8", bg: "bg-gray-50", text: "text-gray-600" },
 };
@@ -45,7 +45,7 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
   const s = STATUS[m.status];
   const recentFrom = data.length - RECENT_WEEKS;
   const chart = data.map((w, i) => ({ label: w.label, value: w[m.key], recent: i >= recentFrom, range: `${w.start} → ${w.end}` }));
-  const recentColor = m.status === "slowing" || m.status === "softening" ? s.color : "#6366f1";
+  const recentColor = m.status === "slowing" || m.status === "softening" ? s.color : "#64748b";
   return (
     <div className="bg-white rounded-xl shadow p-5 border-t-4" style={{ borderTopColor: s.color }}>
       <div className="flex items-center gap-2 mb-1 text-gray-700" style={{ color: s.color }}>
@@ -97,7 +97,7 @@ function MetricCard({ m, data }: { m: MomentumMetric; data: Momentum["weeks"] })
                 label={{ value: "target", position: "insideTopRight", fontSize: 10, fill: "#334155" }} />
             )}
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-              {chart.map((d, i) => <Cell key={i} fill={d.recent ? recentColor : "#c7d2fe"} />)}
+              {chart.map((d, i) => <Cell key={i} fill={d.recent ? recentColor : "#cbd5e1"} />)}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
