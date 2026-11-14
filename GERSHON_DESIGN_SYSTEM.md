@@ -10,7 +10,7 @@ The canonical source of truth is `finance.gershoncrm.com`. Treat the rules below
 - **Wordmark:** `Gershon.AI` in 800-weight, tracking `-0.02em`, color `var(--brand)`.
 - **Sub-label:** small uppercase line below the wordmark naming the platform (`COMPANY`, `FINANCE`, `CLIENT`, etc.), tracking `0.18em`, 10-11px, `var(--text-muted)`.
 - **Version block:** below the sub-label, `v{semver}` + build timestamp. Format: `May 17, 2026, 12:16 PM EDT`.
-- **Logo color:** the brand indigo `#6366f1`. **All brand colors derive from the Gershon.AI logo** — never repaint the logo, and never use a different primary color on a Gershon-family product. If you ever need to change `--brand`, propagate that change to every CSS file across every gershonCRM.* repo in the same PR.
+- **Brand color:** the Gershon red `#FE1B04`, the red of the Gershon Consulting logo and website (Olivier, 2026-11-10; replaced indigo `#6366f1`). **All brand colors derive from the Gershon.AI logo** — never repaint the logo, and never use a different primary color on a Gershon-family product. If you ever need to change `--brand`, propagate that change to every CSS file across every gershonCRM.* repo in the same PR.
 
 ## 2. Color tokens (CSS variables)
 
@@ -19,9 +19,9 @@ Defined in `app/globals.css` (Next.js) or `<style>` block (legacy SPA pages):
 ```css
 :root {
   /* Brand — derived from the Gershon.AI logo */
-  --brand:       #6366f1;   /* indigo-500  */
-  --brand-dark:  #4338ca;   /* indigo-700  — hover state, gradient endpoint */
-  --brand-light: #eef2ff;   /* indigo-50   — hover bg, eyebrow pill, focus halo */
+  --brand:       #FE1B04;   /* Gershon red (logo + website) */
+  --brand-dark:  #d11200;   /* dark red    — hover state, gradient endpoint */
+  --brand-light: #fff5f5;   /* red tint    — hover bg, eyebrow pill, focus halo */
 
   /* Neutrals */
   --bg:          #f8fafc;   /* slate-50    — app background */
@@ -45,7 +45,7 @@ Defined in `app/globals.css` (Next.js) or `<style>` block (legacy SPA pages):
 ```
 
 **Rules:**
-- Never inline a hex value that has a token. `bg-[#6366f1]` → use `bg-[color:var(--brand)]`.
+- Never inline a hex value that has a token. `bg-[#FE1B04]` → use `bg-[color:var(--brand)]`.
 - Never invent a new brand color. New shade needed? Add it here first.
 - Chart series colors follow the semantic accents (success = green for "good", warning = amber for "needs attention", etc.).
 
@@ -150,7 +150,7 @@ Every Gershon.AI platform's sidebar follows this grouping pattern:
 ## 8. Charts
 
 - Use `recharts` (Next.js apps) or Chart.js (legacy SPA pages). Same color scheme either way.
-- **Primary series:** `var(--brand)` (#6366f1).
+- **Primary series:** `var(--brand)` (#FE1B04).
 - **Success / closing / closed:** `var(--success)` (#10b981).
 - **Warning / removed / recycled:** `var(--warning)` (#f59e0b).
 - **Negative / overdue:** `var(--danger)` (#dc2626).
