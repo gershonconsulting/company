@@ -56,7 +56,7 @@ Every Gershon.AI sidebar MUST include, in these positions:
 
 ## 4. Design tokens
 
-- **Brand indigo:** `--brand: #6366f1`. Ink: `--brand-ink: #4f46e5`. Soft tint: `--brand-soft: #eef0fe`. Product name and active nav use `--brand-ink` on `--brand-soft`.
+- **Brand red:** `--brand: #FE1B04` (logo and website red, Olivier 2026-11-10; was indigo). Ink: `--brand-ink: #d11200`. Soft tint: `--brand-soft: #fff5f5`. Product name and active nav use `--brand-ink` on `--brand-soft`.
 - **Surface:** `#ffffff` sidebar on `#f8fafc` page, hairline border `#eef0f4` (`--side-line`).
 - **Logout accent:** text `#dc2626`, hover bg `#fee2e2` — the ONLY destructive-colored control.
 - **Type:** system sans; product name 800 weight; eyebrows & section labels `0.66rem / 700 / 0.13em uppercase / muted`; nav items `0.92rem / 600`.
@@ -75,7 +75,7 @@ Every Gershon.AI sidebar MUST include, in these positions:
 
 - **≤880px:** sidebar collapses to a top bar; nav wraps horizontally; meta block + section labels + footer group hidden (Settings / Logout live in an overflow menu).
 - Every control is a real `<button>` or `<a>` with an accessible label. Icons are decorative (`aria-hidden`).
-- Contrast: 4.5:1 minimum. The muted grays and brand indigo pass on white.
+- Contrast: 4.5:1 minimum. The muted grays and the brand ink `#d11200` pass on white; use `--brand-ink`, not `--brand`, for small text.
 
 ## 7. Reference implementation
 
