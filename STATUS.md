@@ -1,7 +1,8 @@
 # company (company.gershoncrm.com) STATUS
-Updated 2026-11-14. Version in main after PR #7: 1.0.55 (deploy workflow then auto-bumps patch, so live shows 1.0.56+).
+Updated 2026-11-17. Version in main after PR #7: 1.0.55 (deploy workflow then auto-bumps patch, so live shows 1.0.56+).
 
 ## Done
+- 2026-11-17: public /version.txt (app/version.txt/route.ts, edge, reads lib/version APP_VERSION); login footer already shows vX.Y.Z
 - v1.0.55: indigo leftovers replaced by brand red #FE1B04 / neutral slate (PR #7)
 
 ## Open
