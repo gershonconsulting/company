@@ -170,7 +170,7 @@ export default function Sidebar() {
 
         {/* Domain */}
         <div className="text-center text-[0.72rem] text-slate-400 pt-1.5 pb-1">
-          company.gershonCRM.com
+          company.gershoncrm.com
         </div>
       </div>
     </aside>

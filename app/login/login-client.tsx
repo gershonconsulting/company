@@ -162,10 +162,10 @@ export default function LoginClient() {
 
         <div className="text-center mt-6 space-y-1">
           <p className="text-xs text-slate-400">
-            Gershon Consulting — Internal Use Only
+            Internal use only
           </p>
           <p className="text-[0.7rem] text-slate-300">
-            company.gershonCRM.com · v{APP_VERSION}
+            Company by Gershon.AI · v{APP_VERSION}
           </p>
         </div>
       </div>

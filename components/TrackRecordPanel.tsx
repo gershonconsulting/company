@@ -38,7 +38,7 @@ export default function TrackRecordPanel({ avgInvoice }: { avgInvoice: number | 
     <div className="bg-white rounded-xl shadow p-5">
       <h3 className="text-sm font-bold text-gray-700 mb-1 flex items-center"><History size={16} className="text-[color:var(--brand)] mr-2" /> Client track record since 2021</h3>
       <p className="text-xs text-gray-400 mb-4">
-        {B.clientsRun} client campaigns and {B.totalOpportunities.toLocaleString("en-US")} opportunities (Straight-in sheet, client.gershonCRM, finance roster; as of {B.asOf}). Retention counts clients still with us as still running.
+        {B.clientsRun} client campaigns and {B.totalOpportunities.toLocaleString("en-US")} opportunities (Straight-in sheet, Client by Gershon.AI, finance roster; as of {B.asOf}). Retention counts clients still with us as still running.
       </p>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
